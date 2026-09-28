@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMPS Data Transformation Reactor 3D - Enhanced Macro Environment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Three.js + OrbitControls + GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Post-Processing dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #030712;
+            font-family: 'Rajdhani', sans-serif;
+            color: #f3f4f6;
+            user-select: none;
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .neon-text-blue {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.9), 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        @keyframes key-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-key {
+            animation: key-bounce 1.2s infinite;
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden grid-bg">
+
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
+
+    <!-- Top Center HUD Prompt -->
+    <div id="interact-prompt" class="absolute top-20 left-1/2 -translate-x-1/2 z-30 pointer-events-none transition-all duration-300 opacity-0 transform -translate-y-2">
+        <div class="glass-panel px-6 py-3.5 rounded-2xl flex items-center gap-4 border border-cyan-400 shadow-cyan-500/30 shadow-xl bg-slate-900/90">
+            <span class="w-10 h-10 bg-cyan-400 text-slate-950 font-orbitron font-black text-xl rounded-xl flex items-center justify-center animate-key shadow-lg shadow-cyan-400/40">E</span>
+            <div class="flex flex-col">
+                <span id="prompt-action" class="font-orbitron text-sm font-bold text-cyan-300 tracking-wide neon-text-blue">POUR REQUIREMENTS</span>
+                <span class="text-xs text-slate-300">Tilt beaker to pour 5 Domain Gems from Legacy System into Stage 1 Funnel</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HUD Overlay Container -->
+    <div class="relative z-20 w-full h-full flex flex-col justify-between p-4 md:p-6 pointer-events-none">
+
+        <!-- Top Header Bar -->
+        <header class="flex justify-between items-start w-full">
+            <div class="glass-panel p-4 rounded-xl pointer-events-auto flex items-center gap-4">
+                <div class="w-11 h-11 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-2xl font-bold shadow-cyan-500/30 shadow-lg">
+                    <i class="fa-solid fa-atom animate-spin" style="animation-duration: 8s;"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron text-xl md:text-2xl font-black tracking-wider text-cyan-300 neon-text-blue">
+                        AMPS DATA REACTOR
+                    </h1>
+                    <p class="text-xs text-slate-400 tracking-widest uppercase">Legacy Lab &rarr; Migration Core &rarr; Modern Target Lab</p>
+                </div>
+            </div>
+
+            <!-- Output Vault Metrics -->
+            <div class="glass-panel px-6 py-3 rounded-xl pointer-events-auto flex items-center gap-5 md:gap-6">
+                <div class="flex flex-col items-center">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Core Stability</span>
+                    <div class="flex items-center gap-2 mt-1">
+                        <i id="stability-icon" class="fa-solid fa-heart-pulse text-emerald-400 text-lg"></i>
+                        <span id="stability-val" class="font-orbitron text-2xl font-bold text-emerald-400">100%</span>
+                    </div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-700/60"></div>
+
+                <div class="flex flex-col items-center">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">ALIS (Large)</span>
+                    <div class="flex items-center gap-2 mt-1">
+                        <i class="fa-solid fa-gem text-cyan-400 text-lg"></i>
+                        <span id="alis-val" class="font-orbitron text-2xl font-bold text-cyan-400">0</span>
+                    </div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-700/60"></div>
+
+                <div class="flex flex-col items-center">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">CRM (Medium)</span>
+                    <div class="flex items-center gap-2 mt-1">
+                        <i class="fa-solid fa-gem text-amber-400 text-lg"></i>
+                        <span id="crm-val" class="font-orbitron text-2xl font-bold text-amber-400">0</span>
+                    </div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-700/60"></div>
+
+                <div class="flex flex-col items-center">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">CLARA (Medium)</span>
+                    <div class="flex items-center gap-2 mt-1">
+                        <i class="fa-solid fa-gem text-fuchsia-400 text-lg"></i>
+                        <span id="clara-val" class="font-orbitron text-2xl font-bold text-fuchsia-400">0</span>
+                    </div>
+                </div>
+
+                <div class="h-8 w-px bg-slate-700/60"></div>
+
+                <div class="flex flex-col items-center">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">RESPONDERS (Small)</span>
+                    <div class="flex items-center gap-2 mt-1">
+                        <i class="fa-solid fa-gem text-emerald-400 text-lg"></i>
+                        <span id="responders-val" class="font-orbitron text-2xl font-bold text-emerald-400">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Controls Navigation & Stage Selection Quick Bar -->
+        <footer class="flex flex-col md:flex-row justify-between items-end gap-4 w-full">
+            <div class="glass-panel p-2 rounded-2xl pointer-events-auto flex items-center gap-2 overflow-x-auto max-w-full">
+                <!-- Section 1 Focus Button -->
+                <button onclick="focusSection('legacy')" class="stage-nav-btn px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-amber-300 hover:bg-amber-950/50 transition flex items-center gap-1.5 border border-amber-500/40">
+                    <i class="fa-solid fa-flask"></i> 1. Legacy System
+                </button>
+
+                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+
+                <!-- Section 2 Factory Stage Buttons -->
+                <button onclick="focusStage(0)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-cyan-300 transition">Stage 1</button>
+                <button onclick="focusStage(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-amber-300 transition">Stage 2</button>
+                <button onclick="focusStage(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-lime-300 transition">Stage 3</button>
+                <button onclick="focusStage(3)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-cyan-300 transition">Stage 4</button>
+                <button onclick="focusStage(4)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-indigo-300 transition">Stage 5</button>
+
+                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+
+                <!-- Section 3 Focus Button -->
+                <button onclick="focusSection('live')" class="stage-nav-btn px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-emerald-300 hover:bg-emerald-950/50 transition flex items-center gap-1.5 border border-emerald-500/40">
+                    <i class="fa-solid fa-network-wired"></i> 3. Live / Target System
+                </button>
+
+                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+
+                <!-- Global Views -->
+                <button onclick="resetCameraView()" class="px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-cyan-400 hover:bg-cyan-500/20 transition flex items-center gap-1 border border-cyan-500/40">
+                    <i class="fa-solid fa-video"></i> TRANSFORM VIEW
+                </button>
+
+                <button onclick="focusGlobalView2()" class="px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-fuchsia-400 hover:bg-fuchsia-500/20 transition flex items-center gap-1 border border-fuchsia-500/40 shadow-fuchsia-500/20 shadow-md">
+                    <i class="fa-solid fa-globe"></i> GLOBAL VIEW
+                </button>
+            </div>
+
+            <div class="glass-panel p-4 rounded-2xl pointer-events-auto flex items-center gap-6">
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Controls</span>
+                    <span class="font-orbitron text-xs font-bold text-cyan-300">WASD / Arrow Keys Move</span>
+                </div>
+
+                <div class="h-8 w-px bg-slate-700/60"></div>
+
+                <div class="flex gap-2">
+                    <button id="sound-btn" onclick="toggleAudio()" class="p-3 bg-slate-800/80 hover:bg-slate-700 text-cyan-400 border border-slate-600/50 rounded-xl transition">
+                        <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Game Start Modal -->
+    <div id="modal-start" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl max-w-2xl w-full border border-cyan-500/40 shadow-2xl relative overflow-hidden">
+            <div class="flex items-center gap-3.5 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-2xl shadow-lg shadow-cyan-500/30">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <div>
+                    <h2 class="font-orbitron text-2xl font-extrabold text-cyan-300 neon-text-blue">AMPS DATA REACTOR ARCHITECTURE</h2>
+                    <p class="text-xs text-slate-400">Legacy System &rarr; Migration Factory &rarr; Live System</p>
+                </div>
+            </div>
+
+            <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                Explore 3 highly detailed macro-sections:
+                <br>&bull; <strong>Section 1 (Left): Legacy System Lab</strong> &mdash; Animated alchemy bench, steam plumes, desk lanterns, swinging wall pendulum, potion stirrers, and multi-joint alchemist pouring sequence.
+                <br>&bull; <strong>Section 2 (Center): Migration Core</strong> &mdash; 5-stage transformation pipeline with Stage 2 badges (<strong>DM, DA, BA</strong>), Stage 4 badges (<strong>T1-TOM to T5-SQUAD</strong>), and Stage 5 crystal hierarchy.
+                <br>&bull; <strong>Section 3 (Right): Live / Target System</strong> &mdash; Holographic command hub with rotating 3D wireframe molecule, spinning centrifuges, robotic scanner arm, laser bench grid, and 5 active working doctors.
+                <br><br>Use <strong>`GLOBAL VIEW`</strong> to view all 3 macro-sections together!
+            </p>
+
+            <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-orbitron font-extrabold text-base rounded-2xl shadow-lg shadow-cyan-500/30 transition duration-300 transform active:scale-98 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-power-off"></i> INITIALIZE PIPELINE CORE
+            </button>
+        </div>
+    </div>
+
+    <!-- Audio System Script -->
+    <script>
+        class SoundSystem {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playTone(freq, type = 'sine', duration = 0.2, gainVal = 0.1) {
+                if (this.muted || !this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            }
+
+            playChime() {
+                this.playTone(523.25, 'sine', 0.15, 0.1);
+                setTimeout(() => this.playTone(659.25, 'sine', 0.15, 0.1), 80);
+                setTimeout(() => this.playTone(783.99, 'sine', 0.3, 0.12), 160);
+            }
+        }
+
+        const sounds = new SoundSystem();
+
+        function toggleAudio() {
+            sounds.init();
+            sounds.muted = !sounds.muted;
+            const icon = document.getElementById('sound-icon');
+            icon.className = sounds.muted ? "fa-solid fa-volume-xmark text-rose-400" : "fa-solid fa-volume-high text-cyan-400";
+        }
+    </script>
+
+    <!-- Main Game & Scene Script -->
+    <script>
+        let scene, camera, renderer, composer, controls;
+        let isGameRunning = false;
+
+        const SECTION_X = { legacy: -85, factory: 0, live: 85 };
+        const STAGE_X = [-36, -18, 0, 20, 40];
+
+        const DOMAINS = [
+            { name: "CLIENT", color: 0x00f3ff, stage5Target: "ALIS" },
+            { name: "AGENT", color: 0x00ff88, stage5Target: "ALIS" },
+            { name: "POLICY", color: 0xffa500, stage5Target: "ALIS" },
+            { name: "CRM", color: 0x9d00ff, stage5Target: "CRM" },
+            { name: "CLAIMS", color: 0xff0055, stage5Target: "CLARA" }
+        ];
+
+        let playerMesh, playerFlaskMesh;
+        let keys = { w: false, a: false, s: false, d: false };
+        let playerPos = new THREE.Vector3(-36, 0, 8);
+        let isPouring = false;
+
+        let stage2Scientists = [];
+        let stage2VatFluid, stage2Scanners = [];
+        let stage3FluidMesh, stage3Bubbles = [], stage3Arcs = [];
+        let stage4Pods = [], stage4Doctors = [], stage4ConduitParticles = [];
+        let stage5Crystals = {};
+
+        // Section 1 Specific Animations
+        let alchemistArm, alchemistVessel, alchemistStream;
+        let potionStirrer, pendulumRod, deskLanternLight;
+        let legacyBubbles = [], legacySteamParticles = [];
+
+        // Section 3 Specific Animations
+        let liveScientists = [], liveBubbles = [];
+        let holographicMolecule, roboticArm, roboticJoint, roboticHead, laserGridMesh;
+        let centrifuges = [], ceilingConduitFlow = [];
+
+        let alisYield = 0, crmYield = 0, claraYield = 0, respondersYield = 0;
+
+        // SVG Texture Generator Helper with Cache
+        const textureCache = {};
+        function generateSVGTexture(svgString, width = 512, height = 512) {
+            if (textureCache[svgString]) return textureCache[svgString];
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+                texture.needsUpdate = true;
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+            textureCache[svgString] = texture;
+            return texture;
+        }
+
+        function initThree() {
+            const container = document.getElementById('canvas-container');
+
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x030712, 0.005);
+
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 35, 120);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ReinhardToneMapping;
+            renderer.toneMappingExposure = 1.3;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, 0, 0);
+
+            const ambientLight = new THREE.AmbientLight(0x0f172a, 2.5);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+            dirLight.position.set(20, 50, 40);
+            scene.add(dirLight);
+
+            const renderScene = new THREE.RenderPass(scene, camera);
+            const bloomPass = new THREE.UnrealBloomPass(
+                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                1.3, 0.4, 0.82
+            );
+
+            composer = new THREE.EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            buildFloorGrid();
+            buildPlayerCharacter();
+
+            buildSection1LegacySystem();
+            buildSection2MigrationFactory();
+            buildSection3LiveTargetSystem();
+
+            create3DSectionHeaderLabel(SECTION_X.legacy, "1. LEGACY SYSTEM", 0xf59e0b);
+            create3DSectionHeaderLabel(SECTION_X.factory, "2. MIGRATION FACTORY", 0x38bdf8);
+            create3DSectionHeaderLabel(SECTION_X.live, "3. LIVE / TARGET SYSTEM", 0x10b981);
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key.toLowerCase() === 'w') keys.w = true;
+                if (e.key.toLowerCase() === 'a') keys.a = true;
+                if (e.key.toLowerCase() === 's') keys.s = true;
+                if (e.key.toLowerCase() === 'd') keys.d = true;
+                if (e.key.toLowerCase() === 'e') handleInteractKey();
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.key.toLowerCase() === 'w') keys.w = false;
+                if (e.key.toLowerCase() === 'a') keys.a = false;
+                if (e.key.toLowerCase() === 's') keys.s = false;
+                if (e.key.toLowerCase() === 'd') keys.d = false;
+            });
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function create3DSectionHeaderLabel(xPos, text, colorHex) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="140">
+                <rect x="10" y="10" width="580" height="120" rx="24" fill="rgba(15,23,42,0.9)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="8"/>
+                <text x="300" y="78" font-family="Orbitron, sans-serif" font-weight="900" font-size="28" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${text}</text>
+            </svg>`;
+            const texture = generateSVGTexture(svg, 600, 140);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.set(xPos, 16.0, 0);
+            sprite.scale.set(16, 3.8, 1);
+            scene.add(sprite);
+        }
+
+        function create3DStageLabel(xPos, text, colorHex) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="128">
+                <rect x="10" y="10" width="492" height="108" rx="20" fill="rgba(15,23,42,0.85)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="6"/>
+                <text x="256" y="70" font-family="Orbitron, sans-serif" font-weight="700" font-size="22" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${text}</text>
+            </svg>`;
+            const texture = generateSVGTexture(svg, 512, 128);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.set(xPos, 9.5, 0);
+            sprite.scale.set(10, 2.5, 1);
+            scene.add(sprite);
+        }
+
+        function create3DCrystalLabel(nameText, colorHex) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="96">
+                <rect x="10" y="10" width="300" height="76" rx="20" fill="rgba(15,23,42,0.9)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="6"/>
+                <text x="160" y="54" font-family="Orbitron, sans-serif" font-weight="700" font-size="24" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${nameText}</text>
+            </svg>`;
+            const texture = generateSVGTexture(svg, 320, 96);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(4.5, 1.35, 1);
+            return sprite;
+        }
+
+        function createCharacterNameBadge(nameText, colorHex) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="80">
+                <rect x="8" y="8" width="240" height="64" rx="16" fill="rgba(15,23,42,0.9)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="4"/>
+                <text x="128" y="46" font-family="Orbitron, sans-serif" font-weight="700" font-size="20" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${nameText}</text>
+            </svg>`;
+            const texture = generateSVGTexture(svg, 256, 80);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(3.2, 1.0, 1);
+            return sprite;
+        }
+
+        function buildFloorGrid() {
+            const floorGeo = new THREE.PlaneGeometry(320, 80);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x050b14, roughness: 0.8, metalness: 0.5 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -3;
+            scene.add(floor);
+
+            const gridHelper = new THREE.GridHelper(320, 80, 0x00f3ff, 0x1e293b);
+            gridHelper.position.y = -2.9;
+            scene.add(gridHelper);
+        }
+
+        function buildSection1LegacySystem() {
+            const group = new THREE.Group();
+            group.position.set(SECTION_X.legacy, 0, 0);
+
+            // Purple Stone Back Wall
+            const wallSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+                <rect width="512" height="512" fill="#2e1065"/>
+                <path d="M0 64 H512 M0 128 H512 M0 192 H512 M0 256 H512 M0 320 H512 M0 384 H512 M0 448 H512" stroke="#3b0764" stroke-width="6"/>
+                <path d="M64 0 V512 M128 0 V512 M192 0 V512 M256 0 V512 M320 0 V512 M384 0 V512 M448 0 V512" stroke="#3b0764" stroke-width="6"/>
+            </svg>`;
+            const wallTexture = generateSVGTexture(wallSvg);
+            const backWall = new THREE.Mesh(
+                new THREE.PlaneGeometry(28, 14),
+                new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 0.9 })
+            );
+            backWall.position.set(0, 4, -4);
+            group.add(backWall);
+
+            // Arched Windows
+            for (let w = 0; w < 2; w++) {
+                const winGroup = new THREE.Group();
+                winGroup.position.set(-10 + w * 7, 5, -3.9);
+
+                const frame = new THREE.Mesh(
+                    new THREE.BoxGeometry(3.5, 6.5, 0.2),
+                    new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 })
+                );
+                winGroup.add(frame);
+
+                const glass = new THREE.Mesh(
+                    new THREE.PlaneGeometry(3.0, 6.0),
+                    new THREE.MeshBasicMaterial({ color: 0x1e1b4b })
+                );
+                glass.position.z = 0.1;
+                winGroup.add(glass);
+
+                group.add(winGroup);
+            }
+
+            // Wall Pendulum Clock
+            const clockGroup = new THREE.Group();
+            clockGroup.position.set(-1, 7.5, -3.8);
+
+            const clockCase = new THREE.Mesh(
+                new THREE.BoxGeometry(1.8, 3.2, 0.4),
+                new THREE.MeshStandardMaterial({ color: 0x451a03 })
+            );
+            clockGroup.add(clockCase);
+
+            const clockFace = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.6, 0.6, 0.1, 16),
+                new THREE.MeshBasicMaterial({ color: 0xfef08a })
+            );
+            clockFace.rotation.x = Math.PI / 2;
+            clockFace.position.set(0, 0.7, 0.2);
+            clockGroup.add(clockFace);
+
+            pendulumRod = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8),
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.9 })
+            );
+            pendulumRod.position.set(0, -0.6, 0.2);
+            clockGroup.add(pendulumRod);
+
+            group.add(clockGroup);
+
+            // Apothecary Cabinet
+            const cabinetGroup = new THREE.Group();
+            cabinetGroup.position.set(10, 2.5, -1);
+
+            const cabBody = new THREE.Mesh(
+                new THREE.BoxGeometry(6, 11, 4),
+                new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.7 })
+            );
+            cabinetGroup.add(cabBody);
+
+            const drawerSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+                <rect width="256" height="256" fill="#451a03"/>
+                <rect x="10" y="10" width="108" height="68" rx="8" fill="#78350f" stroke="#27272a" stroke-width="4"/>
+                <circle cx="64" cy="44" r="8" fill="#eab308"/>
+                <rect x="138" y="10" width="108" height="68" rx="8" fill="#78350f" stroke="#27272a" stroke-width="4"/>
+                <circle cx="192" cy="44" r="8" fill="#eab308"/>
+            </svg>`;
+            const drawerTexture = generateSVGTexture(drawerSvg, 256, 256);
+            const drawerFront = new THREE.Mesh(
+                new THREE.PlaneGeometry(5.8, 5.0),
+                new THREE.MeshStandardMaterial({ map: drawerTexture })
+            );
+            drawerFront.position.set(0, -2.5, 2.01);
+            cabinetGroup.add(drawerFront);
+
+            for (let p = 0; p < 8; p++) {
+                const bottle = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.2, 0.35, 0.9, 12),
+                    new THREE.MeshStandardMaterial({ color: DOMAINS[p % 5].color, emissive: DOMAINS[p % 5].color, emissiveIntensity: 0.6 })
+                );
+                bottle.position.set(-2.0 + (p % 4) * 1.2, 2.0 + Math.floor(p / 4) * 1.8, 1.2);
+                cabinetGroup.add(bottle);
+            }
+
+            group.add(cabinetGroup);
+
+            // Alchemy Desk
+            const deskGroup = new THREE.Group();
+            deskGroup.position.set(-2, -0.5, 0);
+
+            const deskTop = new THREE.Mesh(
+                new THREE.BoxGeometry(14, 0.8, 5),
+                new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6 })
+            );
+            deskGroup.add(deskTop);
+
+            for (let l = 0; l < 4; l++) {
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.25, 0.2, 2.4, 12),
+                    new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.8 })
+                );
+                leg.position.set((l % 2 === 0 ? -6.2 : 6.2), -1.6, (l < 2 ? -2.0 : 2.0));
+                deskGroup.add(leg);
+
+                const goldTip = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.22, 0.22, 0.4, 12),
+                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.9, roughness: 0.2 })
+                );
+                goldTip.position.set((l % 2 === 0 ? -6.2 : 6.2), -2.6, (l < 2 ? -2.0 : 2.0));
+                deskGroup.add(goldTip);
+            }
+
+            // Candle Lantern with Point Light
+            const lantern = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.25, 0.3, 0.8, 8),
+                new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+            );
+            lantern.position.set(-5.5, 0.8, -1.8);
+            deskGroup.add(lantern);
+
+            deskLanternLight = new THREE.PointLight(0xf59e0b, 1.8, 8);
+            deskLanternLight.position.set(-5.5, 1.2, -1.8);
+            deskGroup.add(deskLanternLight);
+
+            // Parchment Stand
+            const parchmentSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+                <rect width="256" height="256" fill="#fef08a"/>
+                <circle cx="128" cy="128" r="80" fill="none" stroke="#854d0e" stroke-width="6"/>
+                <polygon points="128,48 200,168 56,168" fill="none" stroke="#854d0e" stroke-width="4"/>
+                <circle cx="128" cy="128" r="30" fill="#a855f7" opacity="0.6"/>
+            </svg>`;
+            const parchmentTexture = generateSVGTexture(parchmentSvg, 256, 256);
+            const diagram = new THREE.Mesh(
+                new THREE.PlaneGeometry(2.5, 2.5),
+                new THREE.MeshBasicMaterial({ map: parchmentTexture, side: THREE.DoubleSide })
+            );
+            diagram.position.set(-3.5, 1.8, -0.5);
+            diagram.rotation.y = 0.3;
+            deskGroup.add(diagram);
+
+            // Main Boiling Vessel & Rotating Stirrer
+            const mainFlask = new THREE.Mesh(
+                new THREE.ConeGeometry(0.9, 2.2, 16),
+                new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6, transmission: 0.85 })
+            );
+            mainFlask.position.set(-0.5, 1.5, 0.5);
+            deskGroup.add(mainFlask);
+
+            const mainFluid = new THREE.Mesh(
+                new THREE.ConeGeometry(0.75, 1.5, 16),
+                new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0x7e22ce, emissiveIntensity: 0.8 })
+            );
+            mainFluid.position.set(-0.5, 1.1, 0.5);
+            deskGroup.add(mainFluid);
+
+            potionStirrer = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.03, 0.03, 2.0, 8),
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.9 })
+            );
+            potionStirrer.position.set(-0.5, 2.1, 0.5);
+            deskGroup.add(potionStirrer);
+
+            // Rising Steam & Bubble Particles
+            for (let b = 0; b < 12; b++) {
+                const bubble = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.06 + Math.random() * 0.06, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0xe9d5ff, transparent: true, opacity: 0.7 })
+                );
+                bubble.position.set(-0.5 + (Math.random() - 0.5) * 0.8, 1.0 + Math.random() * 1.5, 0.5 + (Math.random() - 0.5) * 0.8);
+                legacyBubbles.push(bubble);
+                deskGroup.add(bubble);
+            }
+
+            for (let s = 0; s < 10; s++) {
+                const steam = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.12 + Math.random() * 0.1, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.3 })
+                );
+                steam.position.set(-0.5 + (Math.random() - 0.5) * 0.4, 2.6 + Math.random() * 1.2, 0.5 + (Math.random() - 0.5) * 0.4);
+                legacySteamParticles.push(steam);
+                deskGroup.add(steam);
+            }
+
+            group.add(deskGroup);
+
+            // Multi-Joint Alchemist Character
+            const alchemistGroup = new THREE.Group();
+            alchemistGroup.position.set(1.5, -0.5, 0.5);
+
+            const robe = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.5, 0.8, 2.8, 16),
+                new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.5 })
+            );
+            robe.position.y = 1.4;
+            alchemistGroup.add(robe);
+
+            const sash = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.53, 0.53, 0.2, 16),
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8 })
+            );
+            sash.position.y = 1.4;
+            alchemistGroup.add(sash);
+
+            const head = new THREE.Mesh(
+                new THREE.SphereGeometry(0.35, 16, 16),
+                new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.6 })
+            );
+            head.position.y = 3.0;
+            alchemistGroup.add(head);
+
+            const beard = new THREE.Mesh(
+                new THREE.ConeGeometry(0.3, 0.8, 12),
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9 })
+            );
+            beard.position.set(0, 2.7, 0.25);
+            beard.rotation.x = 0.2;
+            alchemistGroup.add(beard);
+
+            alchemistArm = new THREE.Group();
+            alchemistArm.position.set(-0.6, 2.3, 0.2);
+
+            const armMesh = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.12, 1.0, 12),
+                new THREE.MeshStandardMaterial({ color: 0x1d4ed8 })
+            );
+            armMesh.rotation.z = Math.PI / 3;
+            alchemistArm.add(armMesh);
+
+            alchemistVessel = new THREE.Mesh(
+                new THREE.SphereGeometry(0.35, 12, 12),
+                new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7, transmission: 0.8 })
+            );
+            alchemistVessel.position.set(-0.6, -0.2, 0);
+            alchemistArm.add(alchemistVessel);
+
+            alchemistGroup.add(alchemistArm);
+
+            alchemistStream = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.03, 0.06, 1.2, 8),
+                new THREE.MeshBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.85 })
+            );
+            alchemistStream.position.set(-0.2, 1.2, 0.7);
+            group.add(alchemistStream);
+
+            group.add(alchemistGroup);
+
+            // Spellbooks Stack
+            const bookColors = [0x991b1b, 0x065f46, 0x854d0e];
+            for (let s = 0; s < 3; s++) {
+                const book = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.6, 0.35, 1.2),
+                    new THREE.MeshStandardMaterial({ color: bookColors[s], roughness: 0.8 })
+                );
+                book.position.set(6, -2.7 + s * 0.36, 2.0);
+                book.rotation.y = (s * 0.2);
+                group.add(book);
+            }
+
+            scene.add(group);
+        }
+
+        function buildSection2MigrationFactory() {
+            const group = new THREE.Group();
+            group.position.set(SECTION_X.factory, 0, 0);
+
+            buildStage1Funnel();
+            buildStage2Scientists();
+            buildStage3GreenFluidReactor();
+            buildStage4SciFiReactionBay();
+            buildStage5CrystalVaults();
+
+            create3DStageLabel(STAGE_X[0], "STAGE 1: REQUIREMENT MIXTURE", 0x38bdf8);
+            create3DStageLabel(STAGE_X[1], "STAGE 2: ONSHORE CATALYST LAB", 0xf59e0b);
+            create3DStageLabel(STAGE_X[2], "STAGE 3: AGILE REACTION CORE", 0x84cc16);
+            create3DStageLabel(STAGE_X[3], "STAGE 4: OFFSHORE REACTION CHAMBERS", 0x00f3ff);
+            create3DStageLabel(STAGE_X[4], "STAGE 5: STABLE OUTPUT VAULTS", 0x6366f1);
+
+            scene.add(group);
+        }
+
+        function buildSection3LiveTargetSystem() {
+            const group = new THREE.Group();
+            group.position.set(SECTION_X.live, 0, 0);
+
+            // Dark Back Wall
+            const backWall = new THREE.Mesh(
+                new THREE.PlaneGeometry(30, 15),
+                new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.5 })
+            );
+            backWall.position.set(0, 4.5, -5);
+            group.add(backWall);
+
+            // Steel Ceiling Truss Grid
+            for (let t = 0; t < 5; t++) {
+                const trussBar = new THREE.Mesh(
+                    new THREE.BoxGeometry(30, 0.25, 0.25),
+                    new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9 })
+                );
+                trussBar.position.set(0, 11, -4 + t * 2.2);
+                group.add(trussBar);
+
+                // Animated Fluid Conduit Along Truss
+                const conduit = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.18, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0x00f3ff })
+                );
+                conduit.position.set(-15, 11, -4 + t * 2.2);
+                ceilingConduitFlow.push(conduit);
+                group.add(conduit);
+            }
+
+            // Hanging Bulb Lights
+            for (let l = 0; l < 4; l++) {
+                const cord = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.02, 0.02, 2.5, 8),
+                    new THREE.MeshBasicMaterial({ color: 0x0f172a })
+                );
+                cord.position.set(-10.5 + l * 7.0, 9.8, 0);
+                group.add(cord);
+
+                const bulb = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.35, 16, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.9, transparent: true, opacity: 0.85 })
+                );
+                bulb.position.set(-10.5 + l * 7.0, 8.4, 0);
+                group.add(bulb);
+            }
+
+            // Glass Partition Wall
+            const glassWall = new THREE.Mesh(
+                new THREE.PlaneGeometry(28, 12),
+                new THREE.MeshPhysicalMaterial({ color: 0x0f172a, transparent: true, opacity: 0.45, transmission: 0.8, roughness: 0.1 })
+            );
+            glassWall.position.set(0, 3.5, -4.5);
+            group.add(glassWall);
+
+            for (let r = 0; r < 2; r++) {
+                const shelf = new THREE.Mesh(
+                    new THREE.BoxGeometry(26, 0.25, 1.2),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+                );
+                shelf.position.set(0, 3.0 + r * 3.2, -4.2);
+                group.add(shelf);
+
+                for (let b = 0; b < 12; b++) {
+                    const bottle = new THREE.Mesh(
+                        new THREE.CylinderGeometry(0.25, 0.25, 1.1, 12),
+                        new THREE.MeshStandardMaterial({ color: DOMAINS[b % 5].color, emissive: DOMAINS[b % 5].color, emissiveIntensity: 0.7 })
+                    );
+                    bottle.position.set(-11 + b * 2.0, 3.7 + r * 3.2, -4.2);
+                    group.add(bottle);
+                }
+            }
+
+            // Multi-Display Holographic Command Hub
+            const commandHubGroup = new THREE.Group();
+            commandHubGroup.position.set(0, 7.5, -4.3);
+
+            for (let m = -1; m <= 1; m++) {
+                const screenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180">
+                    <rect width="300" height="180" fill="rgba(2,132,199,0.25)" stroke="#38bdf8" stroke-width="6"/>
+                    <path d="M20 140 Q 75 40, 150 100 T 280 60" fill="none" stroke="#00f3ff" stroke-width="4"/>
+                    <line x1="20" y1="150" x2="280" y2="150" stroke="#38bdf8" stroke-width="2"/>
+                    <circle cx="150" cy="100" r="6" fill="#f59e0b"/>
+                </svg>`;
+                const screenTex = generateSVGTexture(screenSvg, 300, 180);
+                const screen = new THREE.Mesh(
+                    new THREE.PlaneGeometry(4.2, 2.4),
+                    new THREE.MeshBasicMaterial({ map: screenTex, transparent: true, opacity: 0.88, side: THREE.DoubleSide })
+                );
+                screen.position.set(m * 4.6, 0, (Math.abs(m) === 1 ? -0.4 : 0));
+                screen.rotation.y = -m * 0.25;
+                commandHubGroup.add(screen);
+            }
+
+            // Rotating 3D Holographic Wireframe Molecule
+            holographicMolecule = new THREE.Group();
+            holographicMolecule.position.set(0, -1.8, 1.2);
+
+            const molCore = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(0.8, 1),
+                new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true })
+            );
+            holographicMolecule.add(molCore);
+
+            for (let a = 0; a < 4; a++) {
+                const atom = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.2, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+                );
+                atom.position.set(Math.cos(a * Math.PI / 2) * 1.5, Math.sin(a * Math.PI / 2) * 1.5, 0);
+                holographicMolecule.add(atom);
+            }
+
+            commandHubGroup.add(holographicMolecule);
+            group.add(commandHubGroup);
+
+            // White Granite Lab Bench
+            const mainBench = new THREE.Mesh(
+                new THREE.BoxGeometry(26, 2.2, 5.0),
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2, metalness: 0.1 })
+            );
+            mainBench.position.set(0, -1.8, 0);
+            group.add(mainBench);
+
+            // Laser Grid Overlay on Bench
+            laserGridMesh = new THREE.GridHelper(24, 20, 0x00f3ff, 0x0284c7);
+            laserGridMesh.position.set(0, -0.68, 0);
+            group.add(laserGridMesh);
+
+            // Robotic Sample Scanning Arm
+            roboticArm = new THREE.Group();
+            roboticArm.position.set(-2.0, -0.6, -1.5);
+
+            const rBase = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.6, 0.7, 0.4, 16),
+                new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9 })
+            );
+            roboticArm.add(rBase);
+
+            roboticJoint = new THREE.Group();
+            roboticJoint.position.y = 0.4;
+
+            const rArm = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.12, 1.8, 12),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8 })
+            );
+            rArm.position.y = 0.9;
+            rArm.rotation.z = -0.4;
+            roboticJoint.add(rArm);
+
+            roboticHead = new THREE.Mesh(
+                new THREE.ConeGeometry(0.25, 0.6, 12),
+                new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+            );
+            roboticHead.position.set(0.6, 1.7, 0);
+            roboticHead.rotation.z = Math.PI;
+            roboticJoint.add(roboticHead);
+
+            roboticArm.add(roboticJoint);
+            group.add(roboticArm);
+
+            // High-Speed Spinning Centrifuges
+            for (let c = 0; c < 2; c++) {
+                const centGroup = new THREE.Group();
+                centGroup.position.set(4.0 + c * 5.0, -0.4, -1.2);
+
+                const centBody = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.8, 0.9, 0.8, 20),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+                );
+                centGroup.add(centBody);
+
+                const centRotor = new THREE.Mesh(
+                    new THREE.TorusGeometry(0.5, 0.08, 12, 24),
+                    new THREE.MeshBasicMaterial({ color: 0x00f3ff })
+                );
+                centRotor.rotation.x = Math.PI / 2;
+                centRotor.position.y = 0.42;
+                centGroup.add(centRotor);
+
+                centrifuges.push(centRotor);
+                group.add(centGroup);
+            }
+
+            // Electron Microscopes & Utensils
+            for (let m = 0; m < 2; m++) {
+                const scopeGroup = new THREE.Group();
+                scopeGroup.position.set(-8 + m * 16, -0.6, 0);
+
+                const scopeBase = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.6, 0.4, 1.8),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8 })
+                );
+                scopeGroup.add(scopeBase);
+
+                const scopeArm = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.18, 0.22, 2.2, 16),
+                    new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.5 })
+                );
+                scopeArm.position.set(-0.3, 1.1, -0.3);
+                scopeArm.rotation.z = -0.2;
+                scopeGroup.add(scopeArm);
+
+                const scopeHead = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.3, 0.2, 1.2, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b })
+                );
+                scopeHead.position.set(0.2, 1.8, 0);
+                scopeHead.rotation.z = 0.3;
+                scopeGroup.add(scopeHead);
+
+                const laser = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8),
+                    new THREE.MeshBasicMaterial({ color: 0x00f3ff })
+                );
+                laser.position.set(0.1, 0.8, 0);
+                scopeGroup.add(laser);
+
+                group.add(scopeGroup);
+            }
+
+            const utensilColors = [0x00f3ff, 0x00ff88, 0xffa500, 0x9d00ff, 0xff0055];
+            for (let u = 0; u < 10; u++) {
+                const xPos = -10 + u * 2.2;
+
+                const flask = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.55, 1.6, 16),
+                    new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, transmission: 0.85 })
+                );
+                flask.position.set(xPos, -0.1, 1.5);
+                group.add(flask);
+
+                const fluid = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.45, 1.0, 16),
+                    new THREE.MeshStandardMaterial({ color: utensilColors[u % 5], emissive: utensilColors[u % 5], emissiveIntensity: 0.8 })
+                );
+                fluid.position.set(xPos, -0.35, 1.5);
+                group.add(fluid);
+
+                const bMesh = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.08, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0xffffff })
+                );
+                bMesh.position.set(xPos, -0.2, 1.5);
+                liveBubbles.push(bMesh);
+                group.add(bMesh);
+            }
+
+            // 5 Working Doctors
+            const doctorX = [-9, -4.5, 0, 4.5, 9];
+            for (let d = 0; d < 5; d++) {
+                const doctor = createDoctorCharacterModel(0x0284c7, 0x00f3ff);
+                doctor.position.set(doctorX[d], -0.7, (d % 2 === 0 ? -1.8 : 1.8));
+                doctor.rotation.y = (d % 2 === 0 ? 0 : Math.PI);
+                liveScientists.push(doctor);
+                group.add(doctor);
+            }
+
+            scene.add(group);
+        }
+
+        function createDoctorCharacterModel(coatColor = 0xf8fafc, accentColor = 0x0284c7) {
+            const group = new THREE.Group();
+
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.9, 12), legMat);
+            leftLeg.position.set(-0.2, 0.45, 0);
+            group.add(leftLeg);
+
+            const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.9, 12), legMat);
+            rightLeg.position.set(0.2, 0.45, 0);
+            group.add(rightLeg);
+
+            const coatGeo = new THREE.CylinderGeometry(0.42, 0.38, 1.4, 16);
+            const coatMat = new THREE.MeshStandardMaterial({ color: coatColor, roughness: 0.3 });
+            const coat = new THREE.Mesh(coatGeo, coatMat);
+            coat.position.y = 1.6;
+            group.add(coat);
+
+            const collarGeo = new THREE.CylinderGeometry(0.45, 0.43, 0.3, 16);
+            const collarMat = new THREE.MeshStandardMaterial({ color: accentColor });
+            const collar = new THREE.Mesh(collarGeo, collarMat);
+            collar.position.y = 2.2;
+            group.add(collar);
+
+            const headGeo = new THREE.SphereGeometry(0.35, 16, 16);
+            const headMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.5 });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 2.5;
+            group.add(head);
+
+            const visorGeo = new THREE.BoxGeometry(0.5, 0.15, 0.25);
+            const visorMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff });
+            const visor = new THREE.Mesh(visorGeo, visorMat);
+            visor.position.set(0, 2.55, 0.22);
+            group.add(visor);
+
+            const armMat = new THREE.MeshStandardMaterial({ color: coatColor });
+            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.8, 12), armMat);
+            leftArm.position.set(-0.52, 1.7, 0.2);
+            leftArm.rotation.x = -0.8;
+            group.add(leftArm);
+
+            const tablet = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.05), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+            tablet.position.set(-0.52, 1.8, 0.55);
+            tablet.rotation.x = -0.5;
+            group.add(tablet);
+
+            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.8, 12), armMat);
+            rightArm.position.set(0.52, 1.7, 0);
+            group.add(rightArm);
+
+            group.userData = { leftArm, rightArm, head, tablet };
+            return group;
+        }
+
+        function buildPlayerCharacter() {
+            const group = new THREE.Group();
+
+            const bodyGeo = new THREE.CylinderGeometry(0.45, 0.45, 1.8, 16);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.3 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 0.9;
+            group.add(body);
+
+            const headGeo = new THREE.SphereGeometry(0.38, 16, 16);
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8 });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 2.0;
+            group.add(head);
+
+            const flaskGeo = new THREE.CylinderGeometry(0.18, 0.35, 0.6, 12);
+            const flaskMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.6, transmission: 0.85 });
+            playerFlaskMesh = new THREE.Mesh(flaskGeo, flaskMat);
+            playerFlaskMesh.position.set(0.65, 1.25, 0.5);
+            group.add(playerFlaskMesh);
+
+            group.position.copy(playerPos);
+            playerMesh = group;
+            scene.add(playerMesh);
+        }
+
+        function buildStage1Funnel() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[0], 0, 0);
+
+            const funnelGeo = new THREE.CylinderGeometry(3.2, 0.8, 4.2, 32, 1, true);
+            const funnelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2, side: THREE.DoubleSide });
+            const funnel = new THREE.Mesh(funnelGeo, funnelMat);
+            group.add(funnel);
+
+            const lipGeo = new THREE.TorusGeometry(3.2, 0.25, 16, 32);
+            const lipMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+            const lip = new THREE.Mesh(lipGeo, lipMat);
+            lip.rotation.x = Math.PI / 2;
+            lip.position.y = 2.1;
+            group.add(lip);
+
+            scene.add(group);
+        }
+
+        // STAGE 2: Restored Holographic Badges (DM, DA, BA)
+        function buildStage2Scientists() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[1], 0, 0);
+
+            const vatGeo = new THREE.CylinderGeometry(2.2, 2.2, 3.2, 24);
+            const vatMat = new THREE.MeshPhysicalMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.5, roughness: 0.1 });
+            const vat = new THREE.Mesh(vatGeo, vatMat);
+            group.add(vat);
+
+            stage2VatFluid = new THREE.Mesh(
+                new THREE.CylinderGeometry(2.0, 2.0, 2.8, 24),
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.6 })
+            );
+            group.add(stage2VatFluid);
+
+            for (let s = 0; s < 2; s++) {
+                const scanner = new THREE.Mesh(
+                    new THREE.RingGeometry(0.5, 2.1, 32),
+                    new THREE.MeshBasicMaterial({ color: 0xfcb316, side: THREE.DoubleSide, transparent: true, opacity: 0.7 })
+                );
+                scanner.rotation.x = Math.PI / 2;
+                scanner.position.y = -1.0 + s * 2.0;
+                stage2Scanners.push(scanner);
+                group.add(scanner);
+            }
+
+            const docNames = ["DM", "DA", "BA"];
+            const angles = [0, (Math.PI * 2) / 3, (Math.PI * 4) / 3];
+
+            for (let i = 0; i < 3; i++) {
+                const docGroup = createDoctorCharacterModel(0xf8fafc, 0xd97706);
+                docGroup.position.set(Math.cos(angles[i]) * 3.6, -0.5, Math.sin(angles[i]) * 3.6);
+                docGroup.rotation.y = -angles[i] + Math.PI / 2;
+
+                const nameBadge = createCharacterNameBadge(docNames[i], 0xfcb316);
+                nameBadge.position.set(0, 3.4, 0);
+                docGroup.add(nameBadge);
+
+                stage2Scientists.push(docGroup);
+                group.add(docGroup);
+            }
+
+            scene.add(group);
+        }
+
+        function buildStage3GreenFluidReactor() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[2], 0, 0);
+
+            const basePlate = new THREE.Mesh(
+                new THREE.BoxGeometry(11.0, 0.4, 7.0),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.3 })
+            );
+            basePlate.position.y = -3.2;
+            group.add(basePlate);
+
+            const vesselGeo = new THREE.CylinderGeometry(3.0, 3.0, 10.0, 32, 1, true);
+            const vesselMat = new THREE.MeshPhysicalMaterial({ color: 0x84cc16, transparent: true, opacity: 0.35, transmission: 0.8, roughness: 0.05 });
+            const vessel = new THREE.Mesh(vesselGeo, vesselMat);
+            vessel.position.set(-2.0, 2.0, 0);
+            group.add(vessel);
+
+            const capGeo = new THREE.CylinderGeometry(3.4, 3.4, 0.8, 32);
+            const capMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+            
+            const topCap = new THREE.Mesh(capGeo, capMat);
+            topCap.position.set(-2.0, 7.2, 0);
+            group.add(topCap);
+
+            const baseCap = new THREE.Mesh(capGeo, capMat);
+            baseCap.position.set(-2.0, -3.1, 0);
+            group.add(baseCap);
+
+            const fluidGeo = new THREE.CylinderGeometry(2.7, 2.7, 9.2, 32);
+            const fluidMat = new THREE.MeshStandardMaterial({ color: 0x84cc16, emissive: 0x4d7c0f, emissiveIntensity: 0.8, transparent: true, opacity: 0.85 });
+            stage3FluidMesh = new THREE.Mesh(fluidGeo, fluidMat);
+            stage3FluidMesh.position.set(-2.0, 2.0, 0);
+            group.add(stage3FluidMesh);
+
+            for (let i = 0; i < 20; i++) {
+                const bGeo = new THREE.SphereGeometry(0.15 + Math.random() * 0.15, 8, 8);
+                const bMat = new THREE.MeshBasicMaterial({ color: 0xd9f99d, transparent: true, opacity: 0.8 });
+                const bMesh = new THREE.Mesh(bGeo, bMat);
+                bMesh.position.set(-2.0 + (Math.random() - 0.5) * 4.0, (Math.random() - 0.5) * 8.0, (Math.random() - 0.5) * 4.0);
+                stage3Bubbles.push(bMesh);
+                group.add(bMesh);
+            }
+
+            for (let a = 0; a < 3; a++) {
+                const arc = new THREE.Mesh(
+                    new THREE.TorusGeometry(3.1, 0.08, 16, 32),
+                    new THREE.MeshBasicMaterial({ color: 0xa3e635 })
+                );
+                arc.rotation.x = Math.PI / 3 * a;
+                arc.position.set(-2.0, 2.0, 0);
+                stage3Arcs.push(arc);
+                group.add(arc);
+            }
+
+            const pipeGroup = new THREE.Group();
+            const pipeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8, roughness: 0.3 });
+            
+            const verticalPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 8.0, 16), pipeMat);
+            verticalPipe.position.set(-6.2, 2.0, 0);
+            pipeGroup.add(verticalPipe);
+
+            const topElbow = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.5, 16), pipeMat);
+            topElbow.rotation.z = Math.PI / 2;
+            topElbow.position.set(-5.4, 6.0, 0);
+            pipeGroup.add(topElbow);
+
+            const bottomElbow = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.5, 16), pipeMat);
+            bottomElbow.rotation.z = Math.PI / 2;
+            bottomElbow.position.set(-5.4, -2.0, 0);
+            pipeGroup.add(bottomElbow);
+
+            group.add(pipeGroup);
+
+            const consoleGroup = new THREE.Group();
+            consoleGroup.position.set(2.8, -1.0, 0.5);
+
+            const desk = new THREE.Mesh(
+                new THREE.BoxGeometry(4.2, 3.0, 2.8),
+                new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.7, roughness: 0.4 })
+            );
+            consoleGroup.add(desk);
+
+            const panel = new THREE.Mesh(
+                new THREE.BoxGeometry(4.0, 0.3, 2.6),
+                new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8 })
+            );
+            panel.position.set(0, 1.6, 0);
+            panel.rotation.x = 0.2;
+            consoleGroup.add(panel);
+
+            for (let b = 0; b < 5; b++) {
+                const btn = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.22, 0.22, 0.2, 16),
+                    new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0x991b1b, emissiveIntensity: 0.6 })
+                );
+                btn.position.set(-1.4 + b * 0.7, 1.8, 0.4);
+                consoleGroup.add(btn);
+            }
+
+            const screenFrame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.6, 0.2), capMat);
+            screenFrame.position.set(-0.8, 3.2, -0.6);
+            consoleGroup.add(screenFrame);
+
+            const screenGlow = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 1.4), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+            screenGlow.position.set(-0.8, 3.2, -0.49);
+            consoleGroup.add(screenGlow);
+
+            group.add(consoleGroup);
+            scene.add(group);
+        }
+
+        // STAGE 4: Restored Holographic Badges (T1-TOM to T5-SQUAD)
+        function buildStage4SciFiReactionBay() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[3], 0, 0);
+
+            for (let s = 0; s < 6; s++) {
+                const rack = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.5, 5.0, 1.2),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 })
+                );
+                rack.position.set(-6 + s * 2.4, 0, -8);
+                group.add(rack);
+
+                for (let l = 0; l < 4; l++) {
+                    const led = new THREE.Mesh(
+                        new THREE.PlaneGeometry(1.0, 0.15),
+                        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+                    );
+                    led.position.set(-6 + s * 2.4, -1.5 + l * 1.0, -7.39);
+                    group.add(led);
+                }
+            }
+
+            const zPositions = [-6, -3, 0, 3, 6];
+            const doctorNamesStage4 = ["T1 - TOM", "T2 - JERRY", "T3 - MICKEY", "T4 - DONALD", "T5 - SQUAD"];
+
+            for (let i = 0; i < 5; i++) {
+                const podGroup = new THREE.Group();
+                podGroup.position.set(0, 0, zPositions[i]);
+
+                const baseRing = new THREE.Mesh(
+                    new THREE.CylinderGeometry(1.4, 1.6, 0.6, 16),
+                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8 })
+                );
+                baseRing.position.y = -2.7;
+                podGroup.add(baseRing);
+
+                const glassPod = new THREE.Mesh(
+                    new THREE.CylinderGeometry(1.0, 1.0, 4.0, 16),
+                    new THREE.MeshPhysicalMaterial({ color: DOMAINS[i].color, transparent: true, opacity: 0.4, transmission: 0.7 })
+                );
+                podGroup.add(glassPod);
+
+                const innerRing = new THREE.Mesh(
+                    new THREE.TorusGeometry(0.85, 0.08, 16, 32),
+                    new THREE.MeshBasicMaterial({ color: DOMAINS[i].color })
+                );
+                innerRing.rotation.x = Math.PI / 2;
+                podGroup.add(innerRing);
+
+                stage4Pods.push({ group: podGroup, glassMesh: glassPod, innerRing, color: DOMAINS[i].color });
+                group.add(podGroup);
+
+                const docGroup = createDoctorCharacterModel(0x0284c7, 0x00f3ff);
+                docGroup.position.set(2.8, -0.5, zPositions[i]);
+                docGroup.rotation.y = -Math.PI / 2;
+
+                const nameBadge = createCharacterNameBadge(doctorNamesStage4[i], 0x00f3ff);
+                nameBadge.position.set(0, 3.4, 0);
+                docGroup.add(nameBadge);
+
+                stage4Doctors.push(docGroup);
+                group.add(docGroup);
+            }
+
+            scene.add(group);
+        }
+
+        // STAGE 5: Size Hierarchy Output Crystals
+        function buildStage5CrystalVaults() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[4], 0, 0);
+
+            // 1. ALIS Crystal - LARGE
+            const alisGroup = new THREE.Group();
+            alisGroup.position.set(0, 0, -6.5);
+            
+            const alisCrystal = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.3, 2.2, 5.5, 6),
+                new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x0284c7, roughness: 0.1 })
+            );
+            alisCrystal.position.y = 1.2;
+            alisGroup.add(alisCrystal);
+
+            const alisBadge = create3DCrystalLabel("ALIS", 0x00f3ff);
+            alisBadge.position.set(0, 5.2, 0);
+            alisGroup.add(alisBadge);
+
+            group.add(alisGroup);
+            stage5Crystals.ALIS = alisCrystal;
+
+            // 2. CRM Crystal - MEDIUM
+            const crmGroup = new THREE.Group();
+            crmGroup.position.set(0, 0, -2.2);
+
+            const crmCrystal = new THREE.Mesh(
+                new THREE.OctahedronGeometry(1.8, 0),
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, roughness: 0.1 })
+            );
+            crmCrystal.position.y = 1.0;
+            crmGroup.add(crmCrystal);
+
+            const crmBadge = create3DCrystalLabel("CRM", 0xf59e0b);
+            crmBadge.position.set(0, 4.2, 0);
+            crmGroup.add(crmBadge);
+
+            group.add(crmGroup);
+            stage5Crystals.CRM = crmCrystal;
+
+            // 3. CLARA Crystal - MEDIUM
+            const claraGroup = new THREE.Group();
+            claraGroup.position.set(0, 0, 2.2);
+
+            const claraCrystal = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(1.6, 0),
+                new THREE.MeshStandardMaterial({ color: 0xe11d48, emissive: 0xbe123c, roughness: 0.1 })
+            );
+            claraCrystal.position.y = 1.0;
+            claraGroup.add(claraCrystal);
+
+            const claraBadge = create3DCrystalLabel("CLARA", 0xe11d48);
+            claraBadge.position.set(0, 4.2, 0);
+            claraGroup.add(claraBadge);
+
+            group.add(claraGroup);
+            stage5Crystals.CLARA = claraCrystal;
+
+            // 4. RESPONDERS Crystal - SMALL
+            const respondersGroup = new THREE.Group();
+            respondersGroup.position.set(0, 0, 6.5);
+
+            const respondersCrystal = new THREE.Mesh(
+                new THREE.DodecahedronGeometry(1.0, 0),
+                new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.8, roughness: 0.1 })
+            );
+            respondersCrystal.position.y = 0.8;
+            respondersGroup.add(respondersCrystal);
+
+            const respondersBadge = create3DCrystalLabel("RESPOND", 0x10b981);
+            respondersBadge.position.set(0, 3.2, 0);
+            respondersGroup.add(respondersBadge);
+
+            group.add(respondersGroup);
+            stage5Crystals.RESPONDERS = respondersCrystal;
+
+            gsap.to(alisCrystal.rotation, { y: Math.PI * 2, duration: 6, repeat: -1, ease: "none" });
+            gsap.to(crmCrystal.rotation, { y: Math.PI * 2, duration: 5, repeat: -1, ease: "none" });
+            gsap.to(claraCrystal.rotation, { y: Math.PI * 2, duration: 7, repeat: -1, ease: "none" });
+            gsap.to(respondersCrystal.rotation, { y: Math.PI * 2, duration: 5.5, repeat: -1, ease: "none" });
+
+            scene.add(group);
+        }
+
+        function buildConduits() {
+            const pipeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.3 });
+            for (let i = 0; i < STAGE_X.length - 1; i++) {
+                const len = STAGE_X[i+1] - STAGE_X[i];
+                const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, len, 8), pipeMat);
+                pipe.rotation.z = -Math.PI / 2;
+                pipe.position.set(STAGE_X[i] + len / 2, -1.5, 0);
+                scene.add(pipe);
+
+                const particle = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.3, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+                );
+                particle.position.set(STAGE_X[i], -1.5, 0);
+                stage4ConduitParticles.push({ mesh: particle, startX: STAGE_X[i], len });
+                scene.add(particle);
+            }
+        }
+
+        function handleInteractKey() {
+            if (isPouring || !isGameRunning) return;
+
+            const funnelPos = new THREE.Vector3(STAGE_X[0], 0, 0);
+            if (playerMesh.position.distanceTo(funnelPos) < 6.0) {
+                executePourSequence();
+            }
+        }
+
+        function executePourSequence() {
+            isPouring = true;
+            document.getElementById('interact-prompt').style.opacity = '0';
+
+            const tline = gsap.timeline({
+                onComplete: () => {
+                    isPouring = false;
+                    gsap.to(playerFlaskMesh.rotation, { z: 0, duration: 0.4 });
+                }
+            });
+
+            tline.to(playerFlaskMesh.rotation, { z: -Math.PI / 2, duration: 0.6 });
+
+            DOMAINS.forEach((domain, idx) => {
+                setTimeout(() => {
+                    spawnAndProcessDomainGem(domain, idx);
+                }, idx * 250);
+            });
+        }
+
+        function spawnAndProcessDomainGem(domain, idx) {
+            const gemGeo = new THREE.DodecahedronGeometry(0.5, 0);
+            const gemMat = new THREE.MeshStandardMaterial({ color: domain.color, emissive: domain.color, emissiveIntensity: 0.8 });
+            const gem = new THREE.Mesh(gemGeo, gemMat);
+
+            gem.position.set(STAGE_X[0], 2.0, 0);
+            scene.add(gem);
+
+            const targets = ["ALIS", "CRM", "CLARA", "RESPONDERS"];
+            const selectedTarget = targets[idx % 4];
+
+            const tline = gsap.timeline({
+                onComplete: () => {
+                    scene.remove(gem);
+                    if (selectedTarget === "ALIS") {
+                        alisYield++;
+                        document.getElementById('alis-val').innerText = alisYield;
+                    } else if (selectedTarget === "CRM") {
+                        crmYield++;
+                        document.getElementById('crm-val').innerText = crmYield;
+                    } else if (selectedTarget === "CLARA") {
+                        claraYield++;
+                        document.getElementById('clara-val').innerText = claraYield;
+                    } else if (selectedTarget === "RESPONDERS") {
+                        respondersYield++;
+                        document.getElementById('responders-val').innerText = respondersYield;
+                    }
+                    sounds.playChime();
+                }
+            });
+
+            tline.to(gem.position, { x: STAGE_X[1], y: 0, duration: 2.0, ease: "power1.inOut" });
+
+            tline.to(gem.position, {
+                duration: 3.5,
+                onStart: () => {
+                    gsap.to(stage2VatFluid.scale, { y: 1.2, duration: 0.3, yoyo: true, repeat: 5 });
+                    stage2Scientists.forEach(doc => {
+                        gsap.to(doc.userData.rightArm.rotation, { x: -0.6, duration: 0.2, yoyo: true, repeat: 6 });
+                    });
+                }
+            });
+
+            tline.to(gem.position, { x: STAGE_X[2] - 2.0, y: 2.0, duration: 1.8, ease: "power1.inOut" });
+
+            tline.to(gem.position, {
+                duration: 2.0,
+                onStart: () => {
+                    gsap.to(stage3FluidMesh.scale, { x: 1.1, z: 1.1, duration: 0.2, yoyo: true, repeat: 6 });
+                }
+            });
+
+            tline.to(gem.position, {
+                x: STAGE_X[3],
+                y: 0,
+                z: [-6, -3, 0, 3, 6][idx],
+                duration: 2.0,
+                ease: "power2.out",
+                onStart: () => {
+                    const doc = stage4Doctors[idx];
+                    gsap.to(doc.position, { x: 2.2, duration: 0.3, yoyo: true, repeat: 3 });
+                }
+            });
+
+            const zMap = { ALIS: -6.5, CRM: -2.2, CLARA: 2.2, RESPONDERS: 6.5 };
+
+            tline.to(gem.position, {
+                x: STAGE_X[4],
+                z: zMap[selectedTarget],
+                duration: 2.0,
+                ease: "power2.in"
+            });
+        }
+
+        function updatePlayerMovement() {
+            if (!isGameRunning || isPouring) return;
+
+            const speed = 0.28;
+            let moveDir = new THREE.Vector3();
+
+            if (keys.w) moveDir.z -= 1;
+            if (keys.s) moveDir.z += 1;
+            if (keys.a) moveDir.x -= 1;
+            if (keys.d) moveDir.x += 1;
+
+            if (moveDir.length() > 0) {
+                moveDir.normalize();
+                playerMesh.position.addScaledVector(moveDir, speed);
+
+                const angle = Math.atan2(moveDir.x, moveDir.z);
+                playerMesh.rotation.y = angle;
+
+                camera.position.x = playerMesh.position.x;
+                controls.target.x = playerMesh.position.x;
+            }
+
+            const funnelPos = new THREE.Vector3(STAGE_X[0], 0, 0);
+            const prompt = document.getElementById('interact-prompt');
+            if (playerMesh.position.distanceTo(funnelPos) < 6.0) {
+                prompt.style.opacity = '1';
+                prompt.style.transform = 'translate(-50%, 0)';
+            } else {
+                prompt.style.opacity = '0';
+                prompt.style.transform = 'translate(-50%, -8px)';
+            }
+        }
+
+        function focusSection(sectionKey) {
+            const targetX = SECTION_X[sectionKey];
+            gsap.to(camera.position, { x: targetX, y: 15, z: 35, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(controls.target, { x: targetX, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" });
+        }
+
+        function focusStage(stageIndex) {
+            const targetX = STAGE_X[stageIndex];
+            gsap.to(camera.position, { x: targetX, y: 10, z: 20, duration: 1.2, ease: "power2.inOut" });
+            gsap.to(controls.target, { x: targetX, y: 0, z: 0, duration: 1.2, ease: "power2.inOut" });
+        }
+
+        function resetCameraView() {
+            gsap.to(camera.position, { x: 0, y: 22, z: 48, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" });
+        }
+
+        function focusGlobalView2() {
+            gsap.to(camera.position, { x: 0, y: 50, z: 150, duration: 2.0, ease: "power2.inOut" });
+            gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 2.0, ease: "power2.inOut" });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            updatePlayerMovement();
+
+            const time = Date.now();
+
+            // --- Section 1 Animations ---
+            if (alchemistArm) {
+                alchemistArm.rotation.z = Math.sin(time * 0.003) * 0.2;
+                alchemistVessel.rotation.z = Math.cos(time * 0.003) * 0.15;
+            }
+            if (potionStirrer) {
+                potionStirrer.rotation.y += 0.05;
+            }
+            if (pendulumRod) {
+                pendulumRod.rotation.z = Math.sin(time * 0.002) * 0.25;
+            }
+            if (deskLanternLight) {
+                deskLanternLight.intensity = 1.5 + Math.sin(time * 0.01) * 0.4;
+            }
+
+            legacyBubbles.forEach(b => {
+                b.position.y += 0.015;
+                if (b.position.y > 2.6) b.position.y = 1.0;
+            });
+            legacySteamParticles.forEach(s => {
+                s.position.y += 0.01;
+                s.position.x += Math.sin(time * 0.005 + s.position.y) * 0.005;
+                if (s.position.y > 3.8) s.position.y = 2.6;
+            });
+
+            // --- Section 3 Animations ---
+            if (holographicMolecule) {
+                holographicMolecule.rotation.y += 0.02;
+                holographicMolecule.rotation.x += 0.01;
+            }
+            if (roboticArm) {
+                roboticJoint.rotation.y = Math.sin(time * 0.0015) * 0.5;
+                roboticHead.rotation.x = Math.cos(time * 0.003) * 0.3;
+            }
+
+            centrifuges.forEach(c => {
+                c.rotation.z += 0.15;
+            });
+
+            ceilingConduitFlow.forEach((c, i) => {
+                c.position.x += 0.2;
+                if (c.position.x > 15) c.position.x = -15;
+            });
+
+            liveBubbles.forEach(b => {
+                b.position.y += 0.015;
+                if (b.position.y > 0.4) b.position.y = -0.3;
+            });
+
+            // --- Doctor & Scientist Idle Animations ---
+            stage2Scientists.concat(stage4Doctors).concat(liveScientists).forEach((doc, i) => {
+                doc.position.y = -0.5 + Math.sin(time * 0.003 + i) * 0.05;
+                doc.userData.head.rotation.y = Math.sin(time * 0.002 + i) * 0.15;
+            });
+
+            // --- Stage 2 Scanner Rings ---
+            stage2Scanners.forEach((sc, i) => {
+                sc.position.y += Math.sin(time * 0.004 + i) * 0.01;
+            });
+
+            // --- Stage 3 Green Reactor Bubbles & Plasma Arcs ---
+            stage3Bubbles.forEach(b => {
+                b.position.y += 0.035;
+                if (b.position.y > 6.0) b.position.y = -2.0;
+            });
+            stage3Arcs.forEach((arc, i) => {
+                arc.rotation.z += 0.02 * (i + 1);
+            });
+
+            // --- Stage 4 Pod Energy Rings ---
+            stage4Pods.forEach((pod, i) => {
+                pod.innerRing.position.y = Math.sin(time * 0.004 + i) * 1.5;
+            });
+
+            // --- Conduit Flow Particles ---
+            stage4ConduitParticles.forEach(cp => {
+                cp.mesh.position.x += 0.4;
+                if (cp.mesh.position.x > cp.startX + cp.len) cp.mesh.position.x = cp.startX;
+            });
+
+            controls.update();
+            composer.render();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function startGame() {
+            sounds.init();
+            document.getElementById('modal-start').classList.add('hidden');
+            isGameRunning = true;
+        }
+
+        window.onload = () => {
+            initThree();
+            animate();
+        };
+    </script>
+</body>
+</html>
