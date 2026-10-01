@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMPS Data Transformation Reactor 3D - Enhanced Macro Environment</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>AMPS Data Transformation Reactor 3D</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -15,8 +13,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    
-    <!-- Post-Processing dependencies -->
+
+    <!-- Post-Processing dependencies for UnrealBloomPass Glow Effect -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
@@ -25,14 +23,21 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
             overflow: hidden;
-            background-color: #030712;
+            background-color: #010409;
             font-family: 'Rajdhani', sans-serif;
             color: #f3f4f6;
             user-select: none;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
         }
 
         .font-orbitron {
@@ -40,22 +45,18 @@
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.2);
-        }
-
-        .neon-text-blue {
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.9), 0 0 20px rgba(56, 189, 248, 0.5);
+            background: rgba(10, 16, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.85);
         }
 
         .grid-bg {
             background-size: 40px 40px;
             background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
 
         @keyframes key-bounce {
@@ -65,6 +66,60 @@
         .animate-key {
             animation: key-bounce 1.2s infinite;
         }
+
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .fixed { position: fixed; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .w-screen { width: 100vw; }
+        .h-screen { height: 100vh; }
+        .flex { display: flex; }
+        .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .items-end { align-items: flex-end; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-1 { gap: 0.25rem; }
+        .gap-1\.5 { gap: 0.375rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-2\.5 { gap: 0.625rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-3\.5 { gap: 0.875rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .p-2 { padding: 0.5rem; }
+        .p-3 { padding: 0.75rem; }
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-3\.5 { padding-left: 0.875rem; padding-right: 0.875rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-3\.5 { padding-top: 0.875rem; padding-bottom: 0.875rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .hidden { display: none !important; }
+        .z-0 { z-index: 0; }
+        .z-20 { z-index: 20; }
+        .z-30 { z-index: 30; }
+        .z-50 { z-index: 50; }
+
+        .stage-nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .stage-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body class="relative w-screen h-screen overflow-hidden grid-bg">
@@ -73,131 +128,127 @@
     <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
 
     <!-- Top Center HUD Prompt -->
-    <div id="interact-prompt" class="absolute top-20 left-1/2 -translate-x-1/2 z-30 pointer-events-none transition-all duration-300 opacity-0 transform -translate-y-2">
-        <div class="glass-panel px-6 py-3.5 rounded-2xl flex items-center gap-4 border border-cyan-400 shadow-cyan-500/30 shadow-xl bg-slate-900/90">
-            <span class="w-10 h-10 bg-cyan-400 text-slate-950 font-orbitron font-black text-xl rounded-xl flex items-center justify-center animate-key shadow-lg shadow-cyan-400/40">E</span>
+    <div id="interact-prompt" class="absolute z-30 transition-all duration-300 opacity-0" style="top: 5rem; left: 50%; transform: translate(-50%, -8px); pointer-events: none;">
+        <div class="glass-panel px-6 py-3.5 rounded-2xl flex items-center gap-4 bg-slate-900/90" style="border-color: #38bdf8;">
+            <span class="w-10 h-10 font-orbitron font-black text-xl rounded-xl flex items-center justify-center animate-key" style="width: 2.5rem; height: 2.5rem; background-color: #38bdf8; color: #020617;">E</span>
             <div class="flex flex-col">
-                <span id="prompt-action" class="font-orbitron text-sm font-bold text-cyan-300 tracking-wide neon-text-blue">POUR REQUIREMENTS</span>
-                <span class="text-xs text-slate-300">Tilt beaker to pour 5 Domain Gems from Legacy System into Stage 1 Funnel</span>
+                <span id="prompt-action" class="font-orbitron text-sm font-bold tracking-wide" style="color: #67e8f9;">POUR REQUIREMENTS</span>
+                <span style="font-size: 0.75rem; color: #cbd5e1;">Tilt beaker to pour 5 Domain Gems from Legacy System into Stage 1 Funnel</span>
             </div>
         </div>
     </div>
 
     <!-- HUD Overlay Container -->
-    <div class="relative z-20 w-full h-full flex flex-col justify-between p-4 md:p-6 pointer-events-none">
+    <div class="relative z-20 w-full h-full flex flex-col justify-between p-4" style="pointer-events: none;">
 
         <!-- Top Header Bar -->
         <header class="flex justify-between items-start w-full">
-            <div class="glass-panel p-4 rounded-xl pointer-events-auto flex items-center gap-4">
-                <div class="w-11 h-11 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-2xl font-bold shadow-cyan-500/30 shadow-lg">
+            <div class="glass-panel px-3 py-2 rounded-lg flex items-center gap-2.5" style="pointer-events: auto;">
+                <div class="rounded-lg flex items-center justify-center font-bold" style="width: 2rem; height: 2rem; background: rgba(6,182,212,0.2); border: 1px solid #22d3ee; color: #22d3ee;">
                     <i class="fa-solid fa-atom animate-spin" style="animation-duration: 8s;"></i>
                 </div>
                 <div>
-                    <h1 class="font-orbitron text-xl md:text-2xl font-black tracking-wider text-cyan-300 neon-text-blue">
+                    <h1 class="font-orbitron font-black tracking-wider leading-tight" style="font-size: 0.95rem; color: #67e8f9;">
                         AMPS DATA REACTOR
                     </h1>
-                    <p class="text-xs text-slate-400 tracking-widest uppercase">Legacy Lab &rarr; Migration Core &rarr; Modern Target Lab</p>
+                    <p style="font-size: 0.625rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 0.125rem;">Legacy Lab &rarr; Migration Core &rarr; Modern Target Lab</p>
                 </div>
             </div>
 
             <!-- Output Vault Metrics -->
-            <div class="glass-panel px-6 py-3 rounded-xl pointer-events-auto flex items-center gap-5 md:gap-6">
+            <div class="glass-panel px-3.5 py-1.5 rounded-lg flex items-center gap-4" style="pointer-events: auto;">
                 <div class="flex flex-col items-center">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Core Stability</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <i id="stability-icon" class="fa-solid fa-heart-pulse text-emerald-400 text-lg"></i>
-                        <span id="stability-val" class="font-orbitron text-2xl font-bold text-emerald-400">100%</span>
+                    <span style="font-size: 0.5625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">Core Stability</span>
+                    <div class="flex items-center gap-1.5" style="margin-top: 0.125rem;">
+                        <i id="stability-icon" class="fa-solid fa-heart-pulse text-sm" style="color: #34d399;"></i>
+                        <span id="stability-val" class="font-orbitron font-bold" style="color: #34d399; font-size: 1rem;">100%</span>
                     </div>
                 </div>
 
-                <div class="h-8 w-px bg-slate-700/60"></div>
+                <div style="height: 1.25rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
 
                 <div class="flex flex-col items-center">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">ALIS (Large)</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <i class="fa-solid fa-gem text-cyan-400 text-lg"></i>
-                        <span id="alis-val" class="font-orbitron text-2xl font-bold text-cyan-400">0</span>
+                    <span style="font-size: 0.5625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">ALIS (L)</span>
+                    <div class="flex items-center gap-1.5" style="margin-top: 0.125rem;">
+                        <i class="fa-solid fa-gem text-sm" style="color: #22d3ee;"></i>
+                        <span id="alis-val" class="font-orbitron font-bold" style="color: #22d3ee; font-size: 1rem;">0</span>
                     </div>
                 </div>
 
-                <div class="h-8 w-px bg-slate-700/60"></div>
+                <div style="height: 1.25rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
 
                 <div class="flex flex-col items-center">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">CRM (Medium)</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <i class="fa-solid fa-gem text-amber-400 text-lg"></i>
-                        <span id="crm-val" class="font-orbitron text-2xl font-bold text-amber-400">0</span>
+                    <span style="font-size: 0.5625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">CRM (M)</span>
+                    <div class="flex items-center gap-1.5" style="margin-top: 0.125rem;">
+                        <i class="fa-solid fa-gem text-sm" style="color: #fbbf24;"></i>
+                        <span id="crm-val" class="font-orbitron font-bold" style="color: #fbbf24; font-size: 1rem;">0</span>
                     </div>
                 </div>
 
-                <div class="h-8 w-px bg-slate-700/60"></div>
+                <div style="height: 1.25rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
 
                 <div class="flex flex-col items-center">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">CLARA (Medium)</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <i class="fa-solid fa-gem text-fuchsia-400 text-lg"></i>
-                        <span id="clara-val" class="font-orbitron text-2xl font-bold text-fuchsia-400">0</span>
+                    <span style="font-size: 0.5625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">CLARA (M)</span>
+                    <div class="flex items-center gap-1.5" style="margin-top: 0.125rem;">
+                        <i class="fa-solid fa-gem text-sm" style="color: #e879f9;"></i>
+                        <span id="clara-val" class="font-orbitron font-bold" style="color: #e879f9; font-size: 1rem;">0</span>
                     </div>
                 </div>
 
-                <div class="h-8 w-px bg-slate-700/60"></div>
+                <div style="height: 1.25rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
 
                 <div class="flex flex-col items-center">
-                    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">RESPONDERS (Small)</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <i class="fa-solid fa-gem text-emerald-400 text-lg"></i>
-                        <span id="responders-val" class="font-orbitron text-2xl font-bold text-emerald-400">0</span>
+                    <span style="font-size: 0.5625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600;">RESPONDERS (S)</span>
+                    <div class="flex items-center gap-1.5" style="margin-top: 0.125rem;">
+                        <i class="fa-solid fa-gem text-sm" style="color: #34d399;"></i>
+                        <span id="responders-val" class="font-orbitron font-bold" style="color: #34d399; font-size: 1rem;">0</span>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Controls Navigation & Stage Selection Quick Bar -->
-        <footer class="flex flex-col md:flex-row justify-between items-end gap-4 w-full">
-            <div class="glass-panel p-2 rounded-2xl pointer-events-auto flex items-center gap-2 overflow-x-auto max-w-full">
-                <!-- Section 1 Focus Button -->
-                <button onclick="focusSection('legacy')" class="stage-nav-btn px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-amber-300 hover:bg-amber-950/50 transition flex items-center gap-1.5 border border-amber-500/40">
+        <footer class="flex justify-between items-end gap-4 w-full">
+            <div class="glass-panel p-2 rounded-2xl flex items-center gap-2" style="pointer-events: auto; overflow-x: auto;">
+                <button onclick="focusSection('legacy')" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1.5" style="font-size: 0.75rem; color: #fcd34d; border: 1px solid rgba(245,158,11,0.4);">
                     <i class="fa-solid fa-flask"></i> 1. Legacy System
                 </button>
 
-                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.25rem;"></div>
 
-                <!-- Section 2 Factory Stage Buttons -->
-                <button onclick="focusStage(0)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-cyan-300 transition">Stage 1</button>
-                <button onclick="focusStage(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-amber-300 transition">Stage 2</button>
-                <button onclick="focusStage(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-lime-300 transition">Stage 3</button>
-                <button onclick="focusStage(3)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-cyan-300 transition">Stage 4</button>
-                <button onclick="focusStage(4)" class="stage-nav-btn px-2.5 py-2 rounded-xl text-xs font-bold font-orbitron text-slate-300 hover:text-indigo-300 transition">Stage 5</button>
+                <button onclick="focusStage(0)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 1</button>
+                <button onclick="focusStage(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 2</button>
+                <button onclick="focusStage(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 3</button>
+                <button onclick="focusStage(3)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 4</button>
+                <button onclick="focusStage(4)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 5</button>
 
-                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.25rem;"></div>
 
-                <!-- Section 3 Focus Button -->
-                <button onclick="focusSection('live')" class="stage-nav-btn px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-emerald-300 hover:bg-emerald-950/50 transition flex items-center gap-1.5 border border-emerald-500/40">
+                <button onclick="focusSection('live')" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1.5" style="font-size: 0.75rem; color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">
                     <i class="fa-solid fa-network-wired"></i> 3. Live / Target System
                 </button>
 
-                <div class="h-6 w-px bg-slate-700 mx-1"></div>
+                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.25rem;"></div>
 
-                <!-- Global Views -->
-                <button onclick="resetCameraView()" class="px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-cyan-400 hover:bg-cyan-500/20 transition flex items-center gap-1 border border-cyan-500/40">
+                <button onclick="resetCameraView()" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1" style="font-size: 0.75rem; color: #22d3ee; border: 1px solid rgba(6,182,212,0.4);">
                     <i class="fa-solid fa-video"></i> TRANSFORM VIEW
                 </button>
 
-                <button onclick="focusGlobalView2()" class="px-3 py-2 rounded-xl text-xs font-bold font-orbitron text-fuchsia-400 hover:bg-fuchsia-500/20 transition flex items-center gap-1 border border-fuchsia-500/40 shadow-fuchsia-500/20 shadow-md">
+                <button onclick="focusGlobalView2()" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1" style="font-size: 0.75rem; color: #e879f9; border: 1px solid rgba(217,70,239,0.4);">
                     <i class="fa-solid fa-globe"></i> GLOBAL VIEW
                 </button>
             </div>
 
-            <div class="glass-panel p-4 rounded-2xl pointer-events-auto flex items-center gap-6">
+            <div class="glass-panel p-4 rounded-2xl flex items-center gap-6" style="pointer-events: auto;">
                 <div class="flex flex-col">
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Controls</span>
-                    <span class="font-orbitron text-xs font-bold text-cyan-300">WASD / Arrow Keys Move</span>
+                    <span style="font-size: 0.625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;">Controls</span>
+                    <span class="font-orbitron font-bold" style="font-size: 0.75rem; color: #67e8f9;">WASD / Arrow Keys Move</span>
                 </div>
 
-                <div class="h-8 w-px bg-slate-700/60"></div>
+                <div style="height: 2rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
 
                 <div class="flex gap-2">
-                    <button id="sound-btn" onclick="toggleAudio()" class="p-3 bg-slate-800/80 hover:bg-slate-700 text-cyan-400 border border-slate-600/50 rounded-xl transition">
+                    <button id="sound-btn" onclick="toggleAudio()" class="p-3 rounded-xl" style="background: rgba(30,41,59,0.8); color: #22d3ee; border: 1px solid rgba(71,85,105,0.5); cursor: pointer;">
                         <i id="sound-icon" class="fa-solid fa-volume-high"></i>
                     </button>
                 </div>
@@ -206,27 +257,27 @@
     </div>
 
     <!-- Game Start Modal -->
-    <div id="modal-start" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xl">
-        <div class="glass-panel p-6 md:p-8 rounded-3xl max-w-2xl w-full border border-cyan-500/40 shadow-2xl relative overflow-hidden">
-            <div class="flex items-center gap-3.5 mb-4">
-                <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 text-2xl shadow-lg shadow-cyan-500/30">
+    <div id="modal-start" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px);">
+        <div class="glass-panel p-6 rounded-3xl relative" style="max-width: 42rem; width: 100%; border: 1px solid rgba(6,182,212,0.4);">
+            <div class="flex items-center gap-3.5" style="margin-bottom: 1rem;">
+                <div class="rounded-2xl flex items-center justify-center text-2xl" style="width: 3rem; height: 3rem; background: rgba(6,182,212,0.2); border: 1px solid #22d3ee; color: #22d3ee;">
                     <i class="fa-solid fa-atom"></i>
                 </div>
                 <div>
-                    <h2 class="font-orbitron text-2xl font-extrabold text-cyan-300 neon-text-blue">AMPS DATA REACTOR ARCHITECTURE</h2>
-                    <p class="text-xs text-slate-400">Legacy System &rarr; Migration Factory &rarr; Live System</p>
+                    <h2 class="font-orbitron font-extrabold text-2xl" style="color: #67e8f9;">AMPS DATA REACTOR ARCHITECTURE</h2>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Legacy System &rarr; Migration Factory &rarr; Live System</p>
                 </div>
             </div>
 
-            <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                Explore 3 highly detailed macro-sections:
-                <br>&bull; <strong>Section 1 (Left): Legacy System Lab</strong> &mdash; Animated alchemy bench, steam plumes, desk lanterns, swinging wall pendulum, potion stirrers, and multi-joint alchemist pouring sequence.
-                <br>&bull; <strong>Section 2 (Center): Migration Core</strong> &mdash; 5-stage transformation pipeline with Stage 2 badges (<strong>DM, DA, BA</strong>), Stage 4 badges (<strong>T1-TOM to T5-SQUAD</strong>), and Stage 5 crystal hierarchy.
-                <br>&bull; <strong>Section 3 (Right): Live / Target System</strong> &mdash; Holographic command hub with rotating 3D wireframe molecule, spinning centrifuges, robotic scanner arm, laser bench grid, and 5 active working doctors.
+            <p style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.625; margin-bottom: 1.5rem;">
+                Explore 3 macro-sections with fully animated 3D environments:
+                <br>&bull; <strong>Section 1 (Left): Legacy System Lab</strong> &mdash; SCMS funnel, IBP Chemical Flask, PEGA Cupboard Setup, Aegon Wall Board, steam particles, and alchemist pouring sequence.
+                <br>&bull; <strong>Section 2 (Center): Migration Core</strong> &mdash; 5-stage pipeline featuring Stage 2 Onshore Catalyst Lab with Delivery Manager, Business Analyst, and Data Architect; Stage 3 Energy Reactor Core with animated floating Sprint Planning & 2 Weeks Sprint labels.
+                <br>&bull; <strong>Section 3 (Right): Live / Target System</strong> &mdash; Laserfiche Header near command board, CXONE & RESPOND Doctor Stations, Linked Mini Output Crystals, and centrifuges.
                 <br><br>Use <strong>`GLOBAL VIEW`</strong> to view all 3 macro-sections together!
             </p>
 
-            <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-orbitron font-extrabold text-base rounded-2xl shadow-lg shadow-cyan-500/30 transition duration-300 transform active:scale-98 flex items-center justify-center gap-3">
+            <button onclick="startGame()" class="w-full py-4 font-orbitron font-extrabold rounded-2xl flex items-center justify-center gap-3" style="background: linear-gradient(to right, #06b6d4, #2563eb, #4f46e5); color: #ffffff; border: none; cursor: pointer; font-size: 1rem;">
                 <i class="fa-solid fa-power-off"></i> INITIALIZE PIPELINE CORE
             </button>
         </div>
@@ -302,23 +353,24 @@
 
         let stage2Scientists = [];
         let stage2VatFluid, stage2Scanners = [];
-        let stage3FluidMesh, stage3Bubbles = [], stage3Arcs = [];
+        let stage3HelixGroup, stage3Helix1, stage3Helix2, stage3ParticleSystem, stage3ParticleGeo;
+        let stage3CoreOrb, stage3FloatingLabels = [];
         let stage4Pods = [], stage4Doctors = [], stage4ConduitParticles = [];
         let stage5Crystals = {};
 
-        // Section 1 Specific Animations
+        // Section 1 Animations
         let alchemistArm, alchemistVessel, alchemistStream;
         let potionStirrer, pendulumRod, deskLanternLight;
         let legacyBubbles = [], legacySteamParticles = [];
 
-        // Section 3 Specific Animations
+        // Section 3 Animations
         let liveScientists = [], liveBubbles = [];
         let holographicMolecule, roboticArm, roboticJoint, roboticHead, laserGridMesh;
         let centrifuges = [], ceilingConduitFlow = [];
+        let liveMiniCrystalsGroup;
 
         let alisYield = 0, crmYield = 0, claraYield = 0, respondersYield = 0;
 
-        // SVG Texture Generator Helper with Cache
         const textureCache = {};
         function generateSVGTexture(svgString, width = 512, height = 512) {
             if (textureCache[svgString]) return textureCache[svgString];
@@ -342,11 +394,78 @@
             return texture;
         }
 
+        function buildFloorGrid() {
+            const floorGeo = new THREE.PlaneGeometry(320, 80);
+            const floorMat = new THREE.MeshStandardMaterial({ 
+                color: 0x050b14, 
+                roughness: 0.3, 
+                metalness: 0.5 
+            });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -3;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            const gridHelper = new THREE.GridHelper(320, 80, 0x0284c7, 0x1e293b);
+            gridHelper.position.y = -2.9;
+            scene.add(gridHelper);
+        }
+
+        function buildStage1Funnel() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[0], 0, 0);
+
+            const funnelGeo = new THREE.CylinderGeometry(3.2, 0.8, 4.2, 32, 1, true);
+            const funnelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.3, side: THREE.DoubleSide });
+            const funnel = new THREE.Mesh(funnelGeo, funnelMat);
+            funnel.castShadow = true;
+            group.add(funnel);
+
+            const lipGeo = new THREE.TorusGeometry(3.2, 0.25, 16, 32);
+            const lipMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.5 });
+            const lip = new THREE.Mesh(lipGeo, lipMat);
+            lip.rotation.x = Math.PI / 2;
+            lip.position.y = 2.1;
+            group.add(lip);
+
+            scene.add(group);
+        }
+
+        function buildPlayerCharacter() {
+            const group = new THREE.Group();
+
+            const bodyGeo = new THREE.CylinderGeometry(0.45, 0.45, 1.8, 16);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.4, metalness: 0.2 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 0.9;
+            body.castShadow = true;
+            group.add(body);
+
+            const headGeo = new THREE.SphereGeometry(0.38, 16, 16);
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.3 });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 2.0;
+            head.castShadow = true;
+            group.add(head);
+
+            const flaskGeo = new THREE.CylinderGeometry(0.18, 0.35, 0.6, 12);
+            const flaskMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, roughness: 0.2 });
+            playerFlaskMesh = new THREE.Mesh(flaskGeo, flaskMat);
+            playerFlaskMesh.position.set(0.65, 1.25, 0.5);
+            playerFlaskMesh.castShadow = true;
+            group.add(playerFlaskMesh);
+
+            group.position.copy(playerPos);
+            playerMesh = group;
+            scene.add(playerMesh);
+        }
+
         function initThree() {
             const container = document.getElementById('canvas-container');
 
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x030712, 0.005);
+            scene.fog = new THREE.FogExp2(0x010409, 0.005);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 35, 120);
@@ -354,8 +473,8 @@
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.toneMapping = THREE.ReinhardToneMapping;
-            renderer.toneMappingExposure = 1.3;
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -363,22 +482,26 @@
             controls.dampingFactor = 0.05;
             controls.target.set(0, 0, 0);
 
-            const ambientLight = new THREE.AmbientLight(0x0f172a, 2.5);
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-            dirLight.position.set(20, 50, 40);
-            scene.add(dirLight);
-
-            const renderScene = new THREE.RenderPass(scene, camera);
+            const renderPass = new THREE.RenderPass(scene, camera);
             const bloomPass = new THREE.UnrealBloomPass(
                 new THREE.Vector2(window.innerWidth, window.innerHeight),
-                1.3, 0.4, 0.82
+                0.08, 0.4, 0.85
             );
 
             composer = new THREE.EffectComposer(renderer);
-            composer.addPass(renderScene);
+            composer.addPass(renderPass);
             composer.addPass(bloomPass);
+
+            const ambientLight = new THREE.AmbientLight(0x1e293b, 1.5);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            dirLight.position.set(30, 60, 40);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.bias = -0.0001;
+            scene.add(dirLight);
 
             buildFloorGrid();
             buildPlayerCharacter();
@@ -423,15 +546,15 @@
         }
 
         function create3DStageLabel(xPos, text, colorHex) {
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="128">
-                <rect x="10" y="10" width="492" height="108" rx="20" fill="rgba(15,23,42,0.85)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="6"/>
-                <text x="256" y="70" font-family="Orbitron, sans-serif" font-weight="700" font-size="22" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${text}</text>
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="560" height="140">
+                <rect x="10" y="10" width="540" height="120" rx="22" fill="rgba(15,23,42,0.85)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="7"/>
+                <text x="280" y="76" font-family="Orbitron, sans-serif" font-weight="700" font-size="24" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${text}</text>
             </svg>`;
-            const texture = generateSVGTexture(svg, 512, 128);
+            const texture = generateSVGTexture(svg, 560, 140);
             const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
             const sprite = new THREE.Sprite(spriteMat);
             sprite.position.set(xPos, 9.5, 0);
-            sprite.scale.set(10, 2.5, 1);
+            sprite.scale.set(11, 2.75, 1);
             scene.add(sprite);
         }
 
@@ -448,35 +571,22 @@
         }
 
         function createCharacterNameBadge(nameText, colorHex) {
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="80">
-                <rect x="8" y="8" width="240" height="64" rx="16" fill="rgba(15,23,42,0.9)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="4"/>
-                <text x="128" y="46" font-family="Orbitron, sans-serif" font-weight="700" font-size="20" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${nameText}</text>
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="96">
+                <rect x="10" y="10" width="492" height="76" rx="20" fill="rgba(15,23,42,0.92)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="6"/>
+                <text x="256" y="56" font-family="Orbitron, sans-serif" font-weight="800" font-size="22" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${nameText}</text>
             </svg>`;
-            const texture = generateSVGTexture(svg, 256, 80);
+            const texture = generateSVGTexture(svg, 512, 96);
             const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
             const sprite = new THREE.Sprite(spriteMat);
-            sprite.scale.set(3.2, 1.0, 1);
+            sprite.scale.set(4.8, 0.95, 1);
             return sprite;
         }
 
-        function buildFloorGrid() {
-            const floorGeo = new THREE.PlaneGeometry(320, 80);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x050b14, roughness: 0.8, metalness: 0.5 });
-            const floor = new THREE.Mesh(floorGeo, floorMat);
-            floor.rotation.x = -Math.PI / 2;
-            floor.position.y = -3;
-            scene.add(floor);
-
-            const gridHelper = new THREE.GridHelper(320, 80, 0x00f3ff, 0x1e293b);
-            gridHelper.position.y = -2.9;
-            scene.add(gridHelper);
-        }
-
+        // --- SECTION 1: LEGACY SYSTEM LAB ---
         function buildSection1LegacySystem() {
             const group = new THREE.Group();
             group.position.set(SECTION_X.legacy, 0, 0);
 
-            // Purple Stone Back Wall
             const wallSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
                 <rect width="512" height="512" fill="#2e1065"/>
                 <path d="M0 64 H512 M0 128 H512 M0 192 H512 M0 256 H512 M0 320 H512 M0 384 H512 M0 448 H512" stroke="#3b0764" stroke-width="6"/>
@@ -485,25 +595,41 @@
             const wallTexture = generateSVGTexture(wallSvg);
             const backWall = new THREE.Mesh(
                 new THREE.PlaneGeometry(28, 14),
-                new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 0.9 })
+                new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 0.8, metalness: 0.2 })
             );
             backWall.position.set(0, 4, -4);
+            backWall.receiveShadow = true;
             group.add(backWall);
 
-            // Arched Windows
+            // CORRECTION 1: Repositioned & Resized Aegon / Legacy Architecture Wall Board precisely on the top-left wall above left window
+            const legacyArtSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200">
+                <rect width="600" height="200" fill="#1e1b4b" stroke="#ef4444" stroke-width="8" rx="16"/>
+                <path d="M 40 100 Q 150 20, 300 100 T 560 100" fill="none" stroke="#f59e0b" stroke-width="8"/>
+                <circle cx="300" cy="100" r="22" fill="#ec4899"/>
+                <text x="300" y="170" font-family="Orbitron, sans-serif" font-weight="900" font-size="26" fill="#f8fafc" text-anchor="middle">AEGON LEGACY LAB</text>
+            </svg>`;
+            const legacyArtTex = generateSVGTexture(legacyArtSvg, 600, 200);
+            const legacyArtPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(6.2, 2.2),
+                new THREE.MeshStandardMaterial({ map: legacyArtTex, roughness: 0.4 })
+            );
+            legacyArtPlane.position.set(-10.0, 9.8, -3.9);
+            group.add(legacyArtPlane);
+
             for (let w = 0; w < 2; w++) {
                 const winGroup = new THREE.Group();
                 winGroup.position.set(-10 + w * 7, 5, -3.9);
 
                 const frame = new THREE.Mesh(
                     new THREE.BoxGeometry(3.5, 6.5, 0.2),
-                    new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 })
+                    new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6, metalness: 0.3 })
                 );
+                frame.castShadow = true;
                 winGroup.add(frame);
 
                 const glass = new THREE.Mesh(
                     new THREE.PlaneGeometry(3.0, 6.0),
-                    new THREE.MeshBasicMaterial({ color: 0x1e1b4b })
+                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6, roughness: 0.2 })
                 );
                 glass.position.z = 0.1;
                 winGroup.add(glass);
@@ -511,19 +637,19 @@
                 group.add(winGroup);
             }
 
-            // Wall Pendulum Clock
             const clockGroup = new THREE.Group();
             clockGroup.position.set(-1, 7.5, -3.8);
 
             const clockCase = new THREE.Mesh(
                 new THREE.BoxGeometry(1.8, 3.2, 0.4),
-                new THREE.MeshStandardMaterial({ color: 0x451a03 })
+                new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.5, metalness: 0.4 })
             );
+            clockCase.castShadow = true;
             clockGroup.add(clockCase);
 
             const clockFace = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.6, 0.6, 0.1, 16),
-                new THREE.MeshBasicMaterial({ color: 0xfef08a })
+                new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.3 })
             );
             clockFace.rotation.x = Math.PI / 2;
             clockFace.position.set(0, 0.7, 0.2);
@@ -531,21 +657,22 @@
 
             pendulumRod = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8),
-                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.9 })
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8, roughness: 0.2 })
             );
             pendulumRod.position.set(0, -0.6, 0.2);
             clockGroup.add(pendulumRod);
 
             group.add(clockGroup);
 
-            // Apothecary Cabinet
+            // Cabinet with PEGA Top Setup
             const cabinetGroup = new THREE.Group();
             cabinetGroup.position.set(10, 2.5, -1);
 
             const cabBody = new THREE.Mesh(
                 new THREE.BoxGeometry(6, 11, 4),
-                new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.7 })
+                new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.5, metalness: 0.2 })
             );
+            cabBody.castShadow = true;
             cabinetGroup.add(cabBody);
 
             const drawerSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
@@ -558,7 +685,7 @@
             const drawerTexture = generateSVGTexture(drawerSvg, 256, 256);
             const drawerFront = new THREE.Mesh(
                 new THREE.PlaneGeometry(5.8, 5.0),
-                new THREE.MeshStandardMaterial({ map: drawerTexture })
+                new THREE.MeshStandardMaterial({ map: drawerTexture, roughness: 0.4 })
             );
             drawerFront.position.set(0, -2.5, 2.01);
             cabinetGroup.add(drawerFront);
@@ -566,53 +693,101 @@
             for (let p = 0; p < 8; p++) {
                 const bottle = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.2, 0.35, 0.9, 12),
-                    new THREE.MeshStandardMaterial({ color: DOMAINS[p % 5].color, emissive: DOMAINS[p % 5].color, emissiveIntensity: 0.6 })
+                    new THREE.MeshStandardMaterial({ color: DOMAINS[p % 5].color, transparent: true, opacity: 0.7, roughness: 0.2 })
                 );
                 bottle.position.set(-2.0 + (p % 4) * 1.2, 2.0 + Math.floor(p / 4) * 1.8, 1.2);
+                bottle.castShadow = true;
                 cabinetGroup.add(bottle);
             }
 
+            // PEGA Setup on Top of Cupboard
+            const pegaSetupGroup = new THREE.Group();
+            pegaSetupGroup.position.set(0, 6.2, 0);
+
+            const pegaFlask = new THREE.Mesh(
+                new THREE.ConeGeometry(0.8, 1.8, 16),
+                new THREE.MeshStandardMaterial({ color: 0x10b981, transparent: true, opacity: 0.7, roughness: 0.2 })
+            );
+            pegaFlask.position.set(-0.8, 0, 0);
+            pegaSetupGroup.add(pegaFlask);
+
+            const pegaFunnel = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.9, 0.2, 1.2, 16, 1, true),
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, side: THREE.DoubleSide, roughness: 0.4 })
+            );
+            pegaFunnel.position.set(0.8, 0.2, 0);
+            pegaSetupGroup.add(pegaFunnel);
+
+            const pegaBadge = create3DCrystalLabel("PEGA", 0x10b981);
+            pegaBadge.position.set(0, 2.2, 0);
+            pegaSetupGroup.add(pegaBadge);
+
+            cabinetGroup.add(pegaSetupGroup);
             group.add(cabinetGroup);
 
-            // Alchemy Desk
+            // Main Alchemy Desk
             const deskGroup = new THREE.Group();
             deskGroup.position.set(-2, -0.5, 0);
 
             const deskTop = new THREE.Mesh(
                 new THREE.BoxGeometry(14, 0.8, 5),
-                new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6 })
+                new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.5, metalness: 0.2 })
             );
+            deskTop.castShadow = true;
+            deskTop.receiveShadow = true;
             deskGroup.add(deskTop);
 
             for (let l = 0; l < 4; l++) {
                 const leg = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.25, 0.2, 2.4, 12),
-                    new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.8 })
+                    new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.6, metalness: 0.3 })
                 );
                 leg.position.set((l % 2 === 0 ? -6.2 : 6.2), -1.6, (l < 2 ? -2.0 : 2.0));
+                leg.castShadow = true;
                 deskGroup.add(leg);
 
                 const goldTip = new THREE.Mesh(
                     new THREE.CylinderGeometry(0.22, 0.22, 0.4, 12),
-                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.9, roughness: 0.2 })
+                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8, roughness: 0.2 })
                 );
                 goldTip.position.set((l % 2 === 0 ? -6.2 : 6.2), -2.6, (l < 2 ? -2.0 : 2.0));
                 deskGroup.add(goldTip);
             }
 
-            // Candle Lantern with Point Light
-            const lantern = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.25, 0.3, 0.8, 8),
-                new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+            // SCMS Funnel Setup (Far Left Desk)
+            const scmsGroup = new THREE.Group();
+            scmsGroup.position.set(-5.5, 1.2, 0.8);
+
+            const scmsFunnel = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.7, 0.15, 1.1, 16, 1, true),
+                new THREE.MeshStandardMaterial({ color: 0xec4899, side: THREE.DoubleSide, metalness: 0.6, roughness: 0.3 })
             );
-            lantern.position.set(-5.5, 0.8, -1.8);
-            deskGroup.add(lantern);
+            scmsFunnel.castShadow = true;
+            scmsGroup.add(scmsFunnel);
 
-            deskLanternLight = new THREE.PointLight(0xf59e0b, 1.8, 8);
-            deskLanternLight.position.set(-5.5, 1.2, -1.8);
-            deskGroup.add(deskLanternLight);
+            const scmsBadge = create3DCrystalLabel("SCMS", 0xec4899);
+            scmsBadge.position.set(0, 1.5, 0);
+            scmsGroup.add(scmsBadge);
 
-            // Parchment Stand
+            deskGroup.add(scmsGroup);
+
+            // IBP Chemical Flask Setup (Right Desk)
+            const ibpGroup = new THREE.Group();
+            ibpGroup.position.set(4.5, 1.2, 0.8);
+
+            const ibpFlask = new THREE.Mesh(
+                new THREE.ConeGeometry(0.8, 1.6, 16),
+                new THREE.MeshStandardMaterial({ color: 0xeab308, transparent: true, opacity: 0.8, roughness: 0.2 })
+            );
+            ibpFlask.castShadow = true;
+            ibpGroup.add(ibpFlask);
+
+            const ibpBadge = create3DCrystalLabel("IBP", 0xeab308);
+            ibpBadge.position.set(0, 1.6, 0);
+            ibpGroup.add(ibpBadge);
+
+            deskGroup.add(ibpGroup);
+
             const parchmentSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
                 <rect width="256" height="256" fill="#fef08a"/>
                 <circle cx="128" cy="128" r="80" fill="none" stroke="#854d0e" stroke-width="6"/>
@@ -621,40 +796,39 @@
             </svg>`;
             const parchmentTexture = generateSVGTexture(parchmentSvg, 256, 256);
             const diagram = new THREE.Mesh(
-                new THREE.PlaneGeometry(2.5, 2.5),
-                new THREE.MeshBasicMaterial({ map: parchmentTexture, side: THREE.DoubleSide })
+                new THREE.PlaneGeometry(2.2, 2.2),
+                new THREE.MeshStandardMaterial({ map: parchmentTexture, roughness: 0.6, side: THREE.DoubleSide })
             );
-            diagram.position.set(-3.5, 1.8, -0.5);
+            diagram.position.set(-2.5, 1.8, -0.5);
             diagram.rotation.y = 0.3;
             deskGroup.add(diagram);
 
-            // Main Boiling Vessel & Rotating Stirrer
             const mainFlask = new THREE.Mesh(
                 new THREE.ConeGeometry(0.9, 2.2, 16),
-                new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6, transmission: 0.85 })
+                new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.5, roughness: 0.2 })
             );
             mainFlask.position.set(-0.5, 1.5, 0.5);
+            mainFlask.castShadow = true;
             deskGroup.add(mainFlask);
 
             const mainFluid = new THREE.Mesh(
                 new THREE.ConeGeometry(0.75, 1.5, 16),
-                new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0x7e22ce, emissiveIntensity: 0.8 })
+                new THREE.MeshStandardMaterial({ color: 0xa855f7, roughness: 0.4 })
             );
             mainFluid.position.set(-0.5, 1.1, 0.5);
             deskGroup.add(mainFluid);
 
             potionStirrer = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.03, 0.03, 2.0, 8),
-                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.9 })
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8, roughness: 0.2 })
             );
             potionStirrer.position.set(-0.5, 2.1, 0.5);
             deskGroup.add(potionStirrer);
 
-            // Rising Steam & Bubble Particles
             for (let b = 0; b < 12; b++) {
                 const bubble = new THREE.Mesh(
                     new THREE.SphereGeometry(0.06 + Math.random() * 0.06, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0xe9d5ff, transparent: true, opacity: 0.7 })
+                    new THREE.MeshStandardMaterial({ color: 0xe9d5ff, transparent: true, opacity: 0.7 })
                 );
                 bubble.position.set(-0.5 + (Math.random() - 0.5) * 0.8, 1.0 + Math.random() * 1.5, 0.5 + (Math.random() - 0.5) * 0.8);
                 legacyBubbles.push(bubble);
@@ -664,7 +838,7 @@
             for (let s = 0; s < 10; s++) {
                 const steam = new THREE.Mesh(
                     new THREE.SphereGeometry(0.12 + Math.random() * 0.1, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.3 })
+                    new THREE.MeshStandardMaterial({ color: 0xa855f7, transparent: true, opacity: 0.35, roughness: 0.8 })
                 );
                 steam.position.set(-0.5 + (Math.random() - 0.5) * 0.4, 2.6 + Math.random() * 1.2, 0.5 + (Math.random() - 0.5) * 0.4);
                 legacySteamParticles.push(steam);
@@ -673,34 +847,35 @@
 
             group.add(deskGroup);
 
-            // Multi-Joint Alchemist Character
             const alchemistGroup = new THREE.Group();
             alchemistGroup.position.set(1.5, -0.5, 0.5);
 
             const robe = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.5, 0.8, 2.8, 16),
-                new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.5 })
+                new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.5, metalness: 0.1 })
             );
             robe.position.y = 1.4;
+            robe.castShadow = true;
             alchemistGroup.add(robe);
 
             const sash = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.53, 0.53, 0.2, 16),
-                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8 })
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8, roughness: 0.2 })
             );
             sash.position.y = 1.4;
             alchemistGroup.add(sash);
 
             const head = new THREE.Mesh(
                 new THREE.SphereGeometry(0.35, 16, 16),
-                new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.6 })
+                new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.5 })
             );
             head.position.y = 3.0;
+            head.castShadow = true;
             alchemistGroup.add(head);
 
             const beard = new THREE.Mesh(
                 new THREE.ConeGeometry(0.3, 0.8, 12),
-                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9 })
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.8 })
             );
             beard.position.set(0, 2.7, 0.25);
             beard.rotation.x = 0.2;
@@ -718,7 +893,7 @@
 
             alchemistVessel = new THREE.Mesh(
                 new THREE.SphereGeometry(0.35, 12, 12),
-                new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7, transmission: 0.8 })
+                new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6, roughness: 0.2 })
             );
             alchemistVessel.position.set(-0.6, -0.2, 0);
             alchemistArm.add(alchemistVessel);
@@ -727,22 +902,22 @@
 
             alchemistStream = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.03, 0.06, 1.2, 8),
-                new THREE.MeshBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.85 })
+                new THREE.MeshStandardMaterial({ color: 0xc084fc, transparent: true, opacity: 0.85, roughness: 0.5 })
             );
             alchemistStream.position.set(-0.2, 1.2, 0.7);
             group.add(alchemistStream);
 
             group.add(alchemistGroup);
 
-            // Spellbooks Stack
             const bookColors = [0x991b1b, 0x065f46, 0x854d0e];
             for (let s = 0; s < 3; s++) {
                 const book = new THREE.Mesh(
                     new THREE.BoxGeometry(1.6, 0.35, 1.2),
-                    new THREE.MeshStandardMaterial({ color: bookColors[s], roughness: 0.8 })
+                    new THREE.MeshStandardMaterial({ color: bookColors[s], roughness: 0.7, metalness: 0.1 })
                 );
                 book.position.set(6, -2.7 + s * 0.36, 2.0);
                 book.rotation.y = (s * 0.2);
+                book.castShadow = true;
                 group.add(book);
             }
 
@@ -755,277 +930,650 @@
 
             buildStage1Funnel();
             buildStage2Scientists();
-            buildStage3GreenFluidReactor();
+            buildStage3SciFiEnergyReactor();
             buildStage4SciFiReactionBay();
             buildStage5CrystalVaults();
 
             create3DStageLabel(STAGE_X[0], "STAGE 1: REQUIREMENT MIXTURE", 0x38bdf8);
             create3DStageLabel(STAGE_X[1], "STAGE 2: ONSHORE CATALYST LAB", 0xf59e0b);
-            create3DStageLabel(STAGE_X[2], "STAGE 3: AGILE REACTION CORE", 0x84cc16);
+            create3DStageLabel(STAGE_X[2], "STAGE 3: ENERGY REACTOR CORE", 0x00e5ff);
             create3DStageLabel(STAGE_X[3], "STAGE 4: OFFSHORE REACTION CHAMBERS", 0x00f3ff);
             create3DStageLabel(STAGE_X[4], "STAGE 5: STABLE OUTPUT VAULTS", 0x6366f1);
 
             scene.add(group);
         }
 
-        function buildSection3LiveTargetSystem() {
+        function createLowPolyOfficeChair() {
+            const chair = new THREE.Group();
+            const darkGrey = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8, flatShading: true });
+            const chrome = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8, roughness: 0.2, flatShading: true });
+
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.18, 1.2), darkGrey);
+            seat.position.y = -0.09;
+            seat.castShadow = true;
+            chair.add(seat);
+
+            const backrest = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.4, 0.16), darkGrey);
+            backrest.position.set(0, 0.6, -0.52);
+            backrest.rotation.x = -0.1;
+            backrest.castShadow = true;
+            chair.add(backrest);
+
+            const spine = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.8, 0.1), chrome);
+            spine.position.set(0, 0.2, -0.5);
+            chair.add(spine);
+
+            const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.0, 8), chrome);
+            cylinder.position.y = -0.6;
+            chair.add(cylinder);
+
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * Math.PI * 2) / 5;
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.8), chrome);
+                leg.position.set(Math.sin(angle) * 0.4, -1.05, Math.cos(angle) * 0.4);
+                leg.rotation.y = angle;
+                chair.add(leg);
+
+                const wheel = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 6), darkGrey);
+                wheel.position.set(Math.sin(angle) * 0.75, -1.1, Math.cos(angle) * 0.75);
+                chair.add(wheel);
+            }
+
+            return chair;
+        }
+
+        function buildStage2Scientists() {
+            stage2Scientists = [];
+            stage2Scanners = [];
+
             const group = new THREE.Group();
-            group.position.set(SECTION_X.live, 0, 0);
+            group.position.set(STAGE_X[1], 0, 0);
 
-            // Dark Back Wall
-            const backWall = new THREE.Mesh(
-                new THREE.PlaneGeometry(30, 15),
-                new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.5 })
-            );
-            backWall.position.set(0, 4.5, -5);
-            group.add(backWall);
+            const toonWhite = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9, flatShading: true });
+            const toonSkyBlue = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.8, flatShading: true });
+            const toonDarkGrey = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9, flatShading: true });
+            const toonTealBg = new THREE.MeshStandardMaterial({ color: 0x0f766e, roughness: 0.9, flatShading: true });
+            const toonMetal = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.5, flatShading: true });
+            const glassClear = new THREE.MeshStandardMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.6, roughness: 0.2 });
 
-            // Steel Ceiling Truss Grid
-            for (let t = 0; t < 5; t++) {
-                const trussBar = new THREE.Mesh(
-                    new THREE.BoxGeometry(30, 0.25, 0.25),
-                    new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9 })
-                );
-                trussBar.position.set(0, 11, -4 + t * 2.2);
-                group.add(trussBar);
+            const backdrop = new THREE.Mesh(new THREE.BoxGeometry(11.5, 11, 0.4), toonTealBg);
+            backdrop.position.set(0, 2.5, -4.8);
+            backdrop.receiveShadow = true;
+            group.add(backdrop);
 
-                // Animated Fluid Conduit Along Truss
-                const conduit = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.18, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0x00f3ff })
-                );
-                conduit.position.set(-15, 11, -4 + t * 2.2);
-                ceilingConduitFlow.push(conduit);
-                group.add(conduit);
+            const benchTop = new THREE.Mesh(new THREE.BoxGeometry(8.5, 0.6, 4.8), toonWhite);
+            benchTop.position.set(0, -0.8, 0);
+            benchTop.castShadow = true;
+            benchTop.receiveShadow = true;
+            group.add(benchTop);
+
+            const benchBase = new THREE.Mesh(new THREE.BoxGeometry(8.1, 2.0, 4.4), toonSkyBlue);
+            benchBase.position.set(0, -2.0, 0);
+            benchBase.castShadow = true;
+            group.add(benchBase);
+
+            for (let dr of [-2.8, 2.8]) {
+                const drawerFront = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.7, 0.1), toonWhite);
+                drawerFront.position.set(dr, -1.8, 2.21);
+                group.add(drawerFront);
+
+                const handle = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.1, 0.1), toonDarkGrey);
+                handle.position.set(dr, -1.8, 2.27);
+                group.add(handle);
             }
 
-            // Hanging Bulb Lights
+            const shelf = new THREE.Mesh(new THREE.BoxGeometry(8.0, 0.3, 1.4), toonWhite);
+            shelf.position.set(0, 2.8, -3.8);
+            shelf.castShadow = true;
+            group.add(shelf);
+
+            const binderColors = [0xef4444, 0x3b82f6, 0x10b981, 0xf59e0b];
+            for (let b = 0; b < 4; b++) {
+                const binder = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.1, 1.0), new THREE.MeshStandardMaterial({ color: binderColors[b % 4], roughness: 0.9, flatShading: true }));
+                binder.position.set(-3.0 + b * 0.5, 3.5, -3.8);
+                binder.castShadow = true;
+                group.add(binder);
+            }
+
+            const vatMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.45, roughness: 0.2 });
+            const vat = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 2.0, 12), vatMat);
+            vat.position.set(0, 0.5, -1.2);
+            vat.castShadow = true;
+            group.add(vat);
+
+            stage2VatFluid = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.05, 1.05, 1.6, 12),
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4 })
+            );
+            stage2VatFluid.position.set(0, 0.5, -1.2);
+            group.add(stage2VatFluid);
+
+            for (let s = 0; s < 2; s++) {
+                const scanner = new THREE.Mesh(
+                    new THREE.RingGeometry(0.35, 1.1, 16),
+                    new THREE.MeshStandardMaterial({ color: 0xfcb316, side: THREE.DoubleSide, transparent: true, opacity: 0.75, roughness: 0.4 })
+                );
+                scanner.rotation.x = Math.PI / 2;
+                scanner.position.set(0, -0.1 + s * 1.1, -1.2);
+                stage2Scanners.push(scanner);
+                group.add(scanner);
+            }
+
+            const distStandBase = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.1, 1.0), toonDarkGrey);
+            distStandBase.position.set(-2.8, -0.45, -0.2);
+            group.add(distStandBase);
+
+            const distRod = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.8, 8), toonMetal);
+            distRod.position.set(-3.3, 0.9, -0.2);
+            group.add(distRod);
+
+            const distFlask = new THREE.Mesh(new THREE.SphereGeometry(0.6, 10, 10), glassClear);
+            distFlask.position.set(-2.8, 0.7, -0.2);
+            distFlask.castShadow = true;
+            group.add(distFlask);
+
+            const distFluid = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.4, flatShading: true }));
+            distFluid.position.set(-2.8, 0.62, -0.2);
+            group.add(distFluid);
+
+            const burnerBase = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.28, 0.25, 10), toonDarkGrey);
+            burnerBase.position.set(-2.8, -0.35, -0.2);
+            group.add(burnerBase);
+
+            const flame = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.4, 8), new THREE.MeshStandardMaterial({ color: 0x00f3ff, flatShading: true }));
+            flame.position.set(-2.8, -0.02, -0.2);
+            group.add(flame);
+
+            const distTubing = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.8, 8), glassClear);
+            distTubing.rotation.z = Math.PI / 3;
+            distTubing.position.set(-2.0, 1.0, -0.2);
+            group.add(distTubing);
+
+            const micGroup = new THREE.Group();
+            micGroup.position.set(3.0, -0.1, -0.8);
+
+            const micBase = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.18, 1.0), toonDarkGrey);
+            micGroup.add(micBase);
+
+            const micArm = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 1.1, 8), toonDarkGrey);
+            micArm.position.set(-0.2, 0.55, -0.2);
+            micArm.rotation.z = -0.2;
+            micGroup.add(micArm);
+
+            const micBody = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.8, 8), toonSkyBlue);
+            micBody.position.set(0.1, 0.85, 0);
+            micBody.rotation.z = 0.2;
+            micGroup.add(micBody);
+
+            group.add(micGroup);
+
+            const compMon = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.0, 0.1), toonDarkGrey);
+            compMon.position.set(0, 0.3, 0.8);
+            group.add(compMon);
+
+            const compScreen = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.85), new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3, flatShading: true }));
+            compScreen.position.set(0, 0.3, 0.86);
+            group.add(compScreen);
+
+            const compStand = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 0.4, 8), toonDarkGrey);
+            compStand.position.set(0, -0.3, 0.8);
+            group.add(compStand);
+
+            const keyboard = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.05, 0.35), toonDarkGrey);
+            keyboard.position.set(0, -0.47, 1.4);
+            group.add(keyboard);
+
+            const chairPositions = [
+                { x: -2.8, z: 2.2, rotY: Math.PI / 6 },
+                { x: 0.0, z: 2.5, rotY: Math.PI },
+                { x: 2.8, z: 2.2, rotY: -Math.PI / 6 }
+            ];
+
+            chairPositions.forEach((pos) => {
+                const chair = createLowPolyOfficeChair();
+                chair.position.set(pos.x, -1.2, pos.y);
+                chair.rotation.y = pos.rotY;
+                group.add(chair);
+            });
+
+            // CORRECTION 2: Updated titles to full clean names without DM, BA, DA short forms
+            const dmCharacter = createSeatedMaleScientist();
+            dmCharacter.position.set(-2.8, -0.85, 2.2);
+            dmCharacter.rotation.y = Math.PI / 6;
+            const b1 = createCharacterNameBadge("DELIVERY MANAGER", 0xfcb316);
+            b1.position.set(0, 3.2, 0);
+            dmCharacter.add(b1);
+            dmCharacter.userData.role = 'DM';
+            stage2Scientists.push(dmCharacter);
+            group.add(dmCharacter);
+
+            const baCharacter = createSeatedFemaleBlondeScientist();
+            baCharacter.position.set(0, -0.85, 2.5);
+            baCharacter.rotation.y = Math.PI;
+            const b3 = createCharacterNameBadge("BUSINESS ANALYST", 0xfcb316);
+            b3.position.set(0, 3.2, 0);
+            baCharacter.add(b3);
+            baCharacter.userData.role = 'BA';
+            stage2Scientists.push(baCharacter);
+            group.add(baCharacter);
+
+            const daCharacter = createSeatedFemaleScientist(0x78350f, true);
+            daCharacter.position.set(2.8, -0.85, 2.2);
+            daCharacter.rotation.y = -Math.PI / 6;
+            const b2 = createCharacterNameBadge("DATA ARCHITECT", 0xfcb316);
+            b2.position.set(0, 3.2, 0);
+            daCharacter.add(b2);
+            daCharacter.userData.role = 'DA';
+            stage2Scientists.push(daCharacter);
+            group.add(daCharacter);
+
+            scene.add(group);
+        }
+
+        function createSeatedMaleScientist() {
+            const group = new THREE.Group();
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.9, flatShading: true });
+            const coatMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9, flatShading: true });
+            const shirtMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.9, flatShading: true });
+            const hairMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9, flatShading: true });
+            const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8, flatShading: true });
+
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.33, 1.0, 8), coatMat);
+            torso.position.y = 0.9;
+            torso.rotation.x = 0.1;
+            torso.castShadow = true;
+            group.add(torso);
+
+            const shirt = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.4, 8), shirtMat);
+            shirt.position.set(0, 1.0, 0.15);
+            group.add(shirt);
+
+            const leftLegTop = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.1, 0.55, 8), pantsMat);
+            leftLegTop.position.set(-0.16, 0.4, 0.22);
+            leftLegTop.rotation.x = Math.PI / 2.2;
+            group.add(leftLegTop);
+
+            const rightLegTop = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.1, 0.55, 8), pantsMat);
+            rightLegTop.position.set(0.16, 0.4, 0.22);
+            rightLegTop.rotation.x = Math.PI / 2.2;
+            group.add(rightLegTop);
+
+            const leftLegBot = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.5, 8), pantsMat);
+            leftLegBot.position.set(-0.16, 0.12, 0.48);
+            group.add(leftLegBot);
+
+            const rightLegBot = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.5, 8), pantsMat);
+            rightLegBot.position.set(0.16, 0.12, 0.48);
+            group.add(rightLegBot);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), skinMat);
+            head.position.set(0, 1.62, 0.08);
+            head.castShadow = true;
+            group.add(head);
+
+            const hair = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.22, 0.64), hairMat);
+            hair.position.set(0, 1.86, 0.08);
+            group.add(hair);
+
+            const beard = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.28, 0.32), hairMat);
+            beard.position.set(0, 1.48, 0.24);
+            group.add(beard);
+
+            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.7, 8), coatMat);
+            leftArm.position.set(-0.4, 0.95, 0.2);
+            leftArm.rotation.x = -0.6;
+            group.add(leftArm);
+
+            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.7, 8), coatMat);
+            rightArm.position.set(0.4, 0.95, 0.3);
+            rightArm.rotation.x = -0.9;
+            group.add(rightArm);
+
+            const heldFlask = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.45, 8), new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 }));
+            heldFlask.position.set(0.4, 0.95, 0.65);
+            group.add(heldFlask);
+
+            group.userData = { head, leftArm, rightArm, torso };
+            return group;
+        }
+
+        function createSeatedFemaleScientist(hairColorHex = 0x78350f, hasGlasses = true) {
+            const group = new THREE.Group();
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.9, flatShading: true });
+            const coatMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9, flatShading: true });
+            const hairMat = new THREE.MeshStandardMaterial({ color: hairColorHex, roughness: 0.9, flatShading: true });
+            const pantsMat = new THREE.MeshStandardMaterial({ color: 0x3b0764, roughness: 0.8, flatShading: true });
+
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.31, 0.95, 8), coatMat);
+            torso.position.y = 0.9;
+            torso.rotation.x = 0.12;
+            torso.castShadow = true;
+            group.add(torso);
+
+            const leftLegTop = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.55, 8), pantsMat);
+            leftLegTop.position.set(-0.15, 0.4, 0.22);
+            leftLegTop.rotation.x = Math.PI / 2.2;
+            group.add(leftLegTop);
+
+            const rightLegTop = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.55, 8), pantsMat);
+            rightLegTop.position.set(0.15, 0.4, 0.22);
+            rightLegTop.rotation.x = Math.PI / 2.2;
+            group.add(rightLegTop);
+
+            const leftLegBot = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.5, 8), pantsMat);
+            leftLegBot.position.set(-0.15, 0.12, 0.48);
+            group.add(leftLegBot);
+
+            const rightLegBot = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.5, 8), pantsMat);
+            rightLegBot.position.set(0.15, 0.12, 0.48);
+            group.add(rightLegBot);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 8), skinMat);
+            head.position.set(0, 1.62, 0.08);
+            head.castShadow = true;
+            group.add(head);
+
+            const hair = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 8), hairMat);
+            hair.position.set(0, 1.7, 0.02);
+            group.add(hair);
+
+            if (hasGlasses) {
+                const glasses = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.11, 0.08), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 }));
+                glasses.position.set(0, 1.64, 0.32);
+                group.add(glasses);
+            }
+
+            const rBoard = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.5, 0.04), new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.8 }));
+            rBoard.position.set(0.05, 0.9, 0.45);
+            rBoard.rotation.x = -0.6;
+            group.add(rBoard);
+
+            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.65, 8), coatMat);
+            leftArm.position.set(-0.36, 0.95, 0.25);
+            leftArm.rotation.x = -0.8;
+            group.add(leftArm);
+
+            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.65, 8), coatMat);
+            rightArm.position.set(0.36, 0.95, 0.25);
+            rightArm.rotation.x = -1.0;
+            group.add(rightArm);
+
+            group.userData = { head, leftArm, rightArm, torso, rBoard };
+            return group;
+        }
+
+        function createSeatedFemaleBlondeScientist() {
+            const group = new THREE.Group();
+            const skinMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.9, flatShading: true });
+            const coatMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9, flatShading: true });
+            const hairMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.9, flatShading: true });
+            const pantsMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.8, flatShading: true });
+
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.32, 0.95, 8), coatMat);
+            torso.position.y = 0.9;
+            torso.rotation.x = 0.15;
+            group.add(torso);
+
+            const leftLegTop = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.55, 8), pantsMat);
+            leftLegTop.position.set(-0.16, 0.4, 0.22);
+            leftLegTop.rotation.x = Math.PI / 2.2;
+            group.add(leftLegTop);
+
+            const rightLegTop = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.09, 0.55, 8), pantsMat);
+            rightLegTop.position.set(0.16, 0.4, 0.22);
+            rightLegTop.rotation.x = Math.PI / 2.2;
+            group.add(rightLegTop);
+
+            const leftLegBot = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.5, 8), pantsMat);
+            leftLegBot.position.set(-0.16, 0.12, 0.48);
+            group.add(leftLegBot);
+
+            const rightLegBot = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.5, 8), pantsMat);
+            rightLegBot.position.set(0.16, 0.12, 0.48);
+            group.add(rightLegBot);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 8), skinMat);
+            head.position.set(0, 1.62, 0.08);
+            group.add(head);
+
+            const hair = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 8), hairMat);
+            hair.position.set(0, 1.7, 0.0);
+            group.add(hair);
+
+            const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.65, 8), coatMat);
+            leftArm.position.set(-0.36, 0.95, 0.28);
+            leftArm.rotation.x = -1.15;
+            group.add(leftArm);
+
+            const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.65, 8), coatMat);
+            rightArm.position.set(0.36, 0.95, 0.28);
+            rightArm.rotation.x = -1.15;
+            group.add(rightArm);
+
+            group.userData = { head, leftArm, rightArm, torso };
+            return group;
+        }
+
+        // --- STAGE 3: 3D SCI-FI ENERGY REACTOR CHAMBER ---
+        function buildStage3SciFiEnergyReactor() {
+            const group = new THREE.Group();
+            group.position.set(STAGE_X[2], 0, 0);
+
+            // Outer Structure & Base
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x0a101d, metalness: 0.85, roughness: 0.2 });
+            const floor = new THREE.Mesh(new THREE.CylinderGeometry(7.5, 7.5, 0.3, 32), floorMat);
+            floor.position.y = -2.85;
+            floor.receiveShadow = true;
+            group.add(floor);
+
+            const metalMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+            const ped1 = new THREE.Mesh(new THREE.CylinderGeometry(5.2, 5.8, 0.5, 32), metalMat);
+            ped1.position.y = -2.45;
+            ped1.castShadow = true;
+            group.add(ped1);
+
+            const ped2 = new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4.8, 0.6, 32), metalMat);
+            ped2.position.y = -1.9;
+            ped2.castShadow = true;
+            group.add(ped2);
+
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * Math.PI * 2) / 12;
+                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.8, 8), metalMat);
+                post.position.set(Math.sin(angle) * 5.4, -1.9, Math.cos(angle) * 5.4);
+                post.castShadow = true;
+                group.add(post);
+            }
+
+            const topCap = new THREE.Mesh(new THREE.CylinderGeometry(4.8, 4.2, 0.8, 32), metalMat);
+            topCap.position.y = 8.5;
+            topCap.castShadow = true;
+            group.add(topCap);
+
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+            for (let r = 0; r < 3; r++) {
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(2.0 + r * 0.9, 0.06, 12, 32), ringMat);
+                ring.rotation.x = Math.PI / 2;
+                ring.position.y = 8.8 + r * 0.1;
+                group.add(ring);
+            }
+
+            // Core Glass Chamber
+            const glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0x00e5ff,
+                roughness: 0.05,
+                transmission: 0.92,
+                ior: 1.5,
+                transparent: true,
+                opacity: 0.6
+            });
+            const glassChamber = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 9.8, 32, 1, true), glassMat);
+            glassChamber.position.y = 3.3;
+            group.add(glassChamber);
+
+            // Swirling Helical Coil Rings
+            stage3HelixGroup = new THREE.Group();
+            stage3HelixGroup.position.y = 3.3;
+
+            const points1 = [], points2 = [];
+            for (let i = 0; i <= 80; i++) {
+                const t = (i / 80) * Math.PI * 8;
+                const y = (i / 80) * 9.2 - 4.6;
+                points1.push(new THREE.Vector3(Math.cos(t) * 3.4, y, Math.sin(t) * 3.4));
+                points2.push(new THREE.Vector3(Math.cos(t + Math.PI) * 3.4, y, Math.sin(t + Math.PI) * 3.4));
+            }
+
+            const curve1 = new THREE.CatmullRomCurve3(points1);
+            const curve2 = new THREE.CatmullRomCurve3(points2);
+
+            const helixMat = new THREE.MeshStandardMaterial({
+                color: 0x00e5ff,
+                emissive: 0x00e5ff,
+                emissiveIntensity: 0.8,
+                roughness: 0.2,
+                metalness: 0.8
+            });
+
+            stage3Helix1 = new THREE.Mesh(new THREE.TubeGeometry(curve1, 100, 0.18, 8, false), helixMat);
+            stage3Helix2 = new THREE.Mesh(new THREE.TubeGeometry(curve2, 100, 0.18, 8, false), helixMat);
+
+            stage3HelixGroup.add(stage3Helix1);
+            stage3HelixGroup.add(stage3Helix2);
+            group.add(stage3HelixGroup);
+
+            // Swirling Glowing Energy Orb Core Inside Reactor
+            stage3CoreOrb = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(1.2, 2),
+                new THREE.MeshStandardMaterial({
+                    color: 0xf59e0b,
+                    emissive: 0xd97706,
+                    emissiveIntensity: 1.5,
+                    roughness: 0.1
+                })
+            );
+            stage3CoreOrb.position.set(0, 3.3, 0);
+            group.add(stage3CoreOrb);
+
+            // Particle Field
+            const particleCount = 400;
+            stage3ParticleGeo = new THREE.BufferGeometry();
+            const particlePositions = new Float32Array(particleCount * 3);
+
+            for (let p = 0; p < particleCount; p++) {
+                const r = Math.random() * 2.2;
+                const theta = Math.random() * Math.PI * 2;
+                particlePositions[p * 3] = Math.cos(theta) * r;
+                particlePositions[p * 3 + 1] = Math.random() * 9.0 - 1.2;
+                particlePositions[p * 3 + 2] = Math.sin(theta) * r;
+            }
+
+            stage3ParticleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+            const particleMat = new THREE.PointsMaterial({
+                color: 0x00e5ff,
+                size: 0.22,
+                transparent: true,
+                opacity: 0.85,
+                blending: THREE.AdditiveBlending
+            });
+
+            stage3ParticleSystem = new THREE.Points(stage3ParticleGeo, particleMat);
+            group.add(stage3ParticleSystem);
+
+            // CORRECTION 3: Properly scaled and animated Floating Labels inside Reactor Core
+            stage3FloatingLabels = [];
+            const floatLabelNames = ["SPRINTPLANNING", "2 WEEKS SPRINT"];
+            floatLabelNames.forEach((name, idx) => {
+                const lbl = create3DCrystalLabel(name, (idx === 0 ? 0x00f3ff : 0xfcb316));
+                lbl.position.set(0, 2.2 + idx * 2.2, 1.8);
+                lbl.scale.set(4.2, 1.25, 1);
+                lbl.userData = { initialY: 2.2 + idx * 2.2, offset: idx * Math.PI };
+                stage3FloatingLabels.push(lbl);
+                group.add(lbl);
+            });
+
+            // SPRINT REFINEMENT Workstation
+            const leftWorkstationGroup = new THREE.Group();
+            leftWorkstationGroup.position.set(-7.5, -0.8, 0);
+
+            const leftDeskFrame = new THREE.Mesh(
+                new THREE.BoxGeometry(4.5, 0.4, 3.2),
+                new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.7, roughness: 0.3 })
+            );
+            leftDeskFrame.castShadow = true;
+            leftWorkstationGroup.add(leftDeskFrame);
+
             for (let l = 0; l < 4; l++) {
-                const cord = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.02, 0.02, 2.5, 8),
-                    new THREE.MeshBasicMaterial({ color: 0x0f172a })
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.12, 0.12, 2.0, 8),
+                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8 })
                 );
-                cord.position.set(-10.5 + l * 7.0, 9.8, 0);
-                group.add(cord);
-
-                const bulb = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.35, 16, 16),
-                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.9, transparent: true, opacity: 0.85 })
-                );
-                bulb.position.set(-10.5 + l * 7.0, 8.4, 0);
-                group.add(bulb);
+                leg.position.set((l % 2 === 0 ? -2.0 : 2.0), -1.1, (l < 2 ? -1.3 : 1.3));
+                leftWorkstationGroup.add(leg);
             }
 
-            // Glass Partition Wall
-            const glassWall = new THREE.Mesh(
-                new THREE.PlaneGeometry(28, 12),
-                new THREE.MeshPhysicalMaterial({ color: 0x0f172a, transparent: true, opacity: 0.45, transmission: 0.8, roughness: 0.1 })
+            for (let g = 0; g < 3; g++) {
+                const beaker = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.25, 0.35, 0.9, 12),
+                    new THREE.MeshStandardMaterial({ color: 0x0284c7, transparent: true, opacity: 0.75 })
+                );
+                beaker.position.set(-1.2 + g * 1.2, 0.65, 0);
+                leftWorkstationGroup.add(beaker);
+            }
+
+            const sprintRefinementBadge = create3DCrystalLabel("SPRINT REFINEMENT", 0xeab308);
+            sprintRefinementBadge.position.set(0, 2.5, 0);
+            leftWorkstationGroup.add(sprintRefinementBadge);
+
+            group.add(leftWorkstationGroup);
+
+            // RETROSPECTIVE & SYSTEM DEMO Terminal Workstation
+            const rightWorkstationGroup = new THREE.Group();
+            rightWorkstationGroup.position.set(7.5, -0.8, 0);
+
+            const rightDeskPlatform = new THREE.Mesh(
+                new THREE.BoxGeometry(5.0, 0.4, 3.2),
+                new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.6, roughness: 0.3 })
             );
-            glassWall.position.set(0, 3.5, -4.5);
-            group.add(glassWall);
+            rightDeskPlatform.castShadow = true;
+            rightWorkstationGroup.add(rightDeskPlatform);
 
-            for (let r = 0; r < 2; r++) {
-                const shelf = new THREE.Mesh(
-                    new THREE.BoxGeometry(26, 0.25, 1.2),
-                    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+            for (let l = 0; l < 4; l++) {
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.12, 0.12, 2.0, 8),
+                    new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.8 })
                 );
-                shelf.position.set(0, 3.0 + r * 3.2, -4.2);
-                group.add(shelf);
-
-                for (let b = 0; b < 12; b++) {
-                    const bottle = new THREE.Mesh(
-                        new THREE.CylinderGeometry(0.25, 0.25, 1.1, 12),
-                        new THREE.MeshStandardMaterial({ color: DOMAINS[b % 5].color, emissive: DOMAINS[b % 5].color, emissiveIntensity: 0.7 })
-                    );
-                    bottle.position.set(-11 + b * 2.0, 3.7 + r * 3.2, -4.2);
-                    group.add(bottle);
-                }
+                leg.position.set((l % 2 === 0 ? -2.2 : 2.2), -1.1, (l < 2 ? -1.3 : 1.3));
+                rightWorkstationGroup.add(leg);
             }
 
-            // Multi-Display Holographic Command Hub
-            const commandHubGroup = new THREE.Group();
-            commandHubGroup.position.set(0, 7.5, -4.3);
-
-            for (let m = -1; m <= 1; m++) {
-                const screenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180">
-                    <rect width="300" height="180" fill="rgba(2,132,199,0.25)" stroke="#38bdf8" stroke-width="6"/>
-                    <path d="M20 140 Q 75 40, 150 100 T 280 60" fill="none" stroke="#00f3ff" stroke-width="4"/>
-                    <line x1="20" y1="150" x2="280" y2="150" stroke="#38bdf8" stroke-width="2"/>
-                    <circle cx="150" cy="100" r="6" fill="#f59e0b"/>
-                </svg>`;
-                const screenTex = generateSVGTexture(screenSvg, 300, 180);
-                const screen = new THREE.Mesh(
-                    new THREE.PlaneGeometry(4.2, 2.4),
-                    new THREE.MeshBasicMaterial({ map: screenTex, transparent: true, opacity: 0.88, side: THREE.DoubleSide })
-                );
-                screen.position.set(m * 4.6, 0, (Math.abs(m) === 1 ? -0.4 : 0));
-                screen.rotation.y = -m * 0.25;
-                commandHubGroup.add(screen);
-            }
-
-            // Rotating 3D Holographic Wireframe Molecule
-            holographicMolecule = new THREE.Group();
-            holographicMolecule.position.set(0, -1.8, 1.2);
-
-            const molCore = new THREE.Mesh(
-                new THREE.IcosahedronGeometry(0.8, 1),
-                new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true })
+            const termMon = new THREE.Mesh(
+                new THREE.BoxGeometry(1.6, 1.2, 0.2),
+                new THREE.MeshStandardMaterial({ color: 0xf97316, metalness: 0.8, roughness: 0.2 })
             );
-            holographicMolecule.add(molCore);
+            termMon.position.set(-1.2, 1.0, 0);
+            rightWorkstationGroup.add(termMon);
 
-            for (let a = 0; a < 4; a++) {
-                const atom = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.2, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
-                );
-                atom.position.set(Math.cos(a * Math.PI / 2) * 1.5, Math.sin(a * Math.PI / 2) * 1.5, 0);
-                holographicMolecule.add(atom);
-            }
-
-            commandHubGroup.add(holographicMolecule);
-            group.add(commandHubGroup);
-
-            // White Granite Lab Bench
-            const mainBench = new THREE.Mesh(
-                new THREE.BoxGeometry(26, 2.2, 5.0),
-                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2, metalness: 0.1 })
+            const termTower = new THREE.Mesh(
+                new THREE.BoxGeometry(1.2, 2.8, 1.8),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 })
             );
-            mainBench.position.set(0, -1.8, 0);
-            group.add(mainBench);
+            termTower.position.set(1.2, 1.6, 0);
+            termTower.castShadow = true;
+            rightWorkstationGroup.add(termTower);
 
-            // Laser Grid Overlay on Bench
-            laserGridMesh = new THREE.GridHelper(24, 20, 0x00f3ff, 0x0284c7);
-            laserGridMesh.position.set(0, -0.68, 0);
-            group.add(laserGridMesh);
+            const retroBadge = create3DCrystalLabel("RETROSPECTIVE", 0xf97316);
+            retroBadge.position.set(-1.2, 2.5, 0);
+            rightWorkstationGroup.add(retroBadge);
 
-            // Robotic Sample Scanning Arm
-            roboticArm = new THREE.Group();
-            roboticArm.position.set(-2.0, -0.6, -1.5);
+            const demoBadge = create3DCrystalLabel("SYSTEM DEMO", 0xef4444);
+            demoBadge.position.set(1.2, 3.5, 0);
+            rightWorkstationGroup.add(demoBadge);
 
-            const rBase = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.6, 0.7, 0.4, 16),
-                new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9 })
-            );
-            roboticArm.add(rBase);
+            group.add(rightWorkstationGroup);
 
-            roboticJoint = new THREE.Group();
-            roboticJoint.position.y = 0.4;
-
-            const rArm = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.12, 0.12, 1.8, 12),
-                new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8 })
-            );
-            rArm.position.y = 0.9;
-            rArm.rotation.z = -0.4;
-            roboticJoint.add(rArm);
-
-            roboticHead = new THREE.Mesh(
-                new THREE.ConeGeometry(0.25, 0.6, 12),
-                new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
-            );
-            roboticHead.position.set(0.6, 1.7, 0);
-            roboticHead.rotation.z = Math.PI;
-            roboticJoint.add(roboticHead);
-
-            roboticArm.add(roboticJoint);
-            group.add(roboticArm);
-
-            // High-Speed Spinning Centrifuges
-            for (let c = 0; c < 2; c++) {
-                const centGroup = new THREE.Group();
-                centGroup.position.set(4.0 + c * 5.0, -0.4, -1.2);
-
-                const centBody = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.8, 0.9, 0.8, 20),
-                    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
-                );
-                centGroup.add(centBody);
-
-                const centRotor = new THREE.Mesh(
-                    new THREE.TorusGeometry(0.5, 0.08, 12, 24),
-                    new THREE.MeshBasicMaterial({ color: 0x00f3ff })
-                );
-                centRotor.rotation.x = Math.PI / 2;
-                centRotor.position.y = 0.42;
-                centGroup.add(centRotor);
-
-                centrifuges.push(centRotor);
-                group.add(centGroup);
-            }
-
-            // Electron Microscopes & Utensils
-            for (let m = 0; m < 2; m++) {
-                const scopeGroup = new THREE.Group();
-                scopeGroup.position.set(-8 + m * 16, -0.6, 0);
-
-                const scopeBase = new THREE.Mesh(
-                    new THREE.BoxGeometry(1.6, 0.4, 1.8),
-                    new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8 })
-                );
-                scopeGroup.add(scopeBase);
-
-                const scopeArm = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.18, 0.22, 2.2, 16),
-                    new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.5 })
-                );
-                scopeArm.position.set(-0.3, 1.1, -0.3);
-                scopeArm.rotation.z = -0.2;
-                scopeGroup.add(scopeArm);
-
-                const scopeHead = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.3, 0.2, 1.2, 16),
-                    new THREE.MeshStandardMaterial({ color: 0x1e293b })
-                );
-                scopeHead.position.set(0.2, 1.8, 0);
-                scopeHead.rotation.z = 0.3;
-                scopeGroup.add(scopeHead);
-
-                const laser = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8),
-                    new THREE.MeshBasicMaterial({ color: 0x00f3ff })
-                );
-                laser.position.set(0.1, 0.8, 0);
-                scopeGroup.add(laser);
-
-                group.add(scopeGroup);
-            }
-
-            const utensilColors = [0x00f3ff, 0x00ff88, 0xffa500, 0x9d00ff, 0xff0055];
-            for (let u = 0; u < 10; u++) {
-                const xPos = -10 + u * 2.2;
-
-                const flask = new THREE.Mesh(
-                    new THREE.ConeGeometry(0.55, 1.6, 16),
-                    new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, transmission: 0.85 })
-                );
-                flask.position.set(xPos, -0.1, 1.5);
-                group.add(flask);
-
-                const fluid = new THREE.Mesh(
-                    new THREE.ConeGeometry(0.45, 1.0, 16),
-                    new THREE.MeshStandardMaterial({ color: utensilColors[u % 5], emissive: utensilColors[u % 5], emissiveIntensity: 0.8 })
-                );
-                fluid.position.set(xPos, -0.35, 1.5);
-                group.add(fluid);
-
-                const bMesh = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.08, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0xffffff })
-                );
-                bMesh.position.set(xPos, -0.2, 1.5);
-                liveBubbles.push(bMesh);
-                group.add(bMesh);
-            }
-
-            // 5 Working Doctors
-            const doctorX = [-9, -4.5, 0, 4.5, 9];
-            for (let d = 0; d < 5; d++) {
-                const doctor = createDoctorCharacterModel(0x0284c7, 0x00f3ff);
-                doctor.position.set(doctorX[d], -0.7, (d % 2 === 0 ? -1.8 : 1.8));
-                doctor.rotation.y = (d % 2 === 0 ? 0 : Math.PI);
-                liveScientists.push(doctor);
-                group.add(doctor);
-            }
+            const reactorLight = new THREE.PointLight(0x00e5ff, 4.0, 25);
+            reactorLight.position.set(0, 3.3, 0);
+            group.add(reactorLight);
 
             scene.add(group);
         }
@@ -1033,261 +1581,64 @@
         function createDoctorCharacterModel(coatColor = 0xf8fafc, accentColor = 0x0284c7) {
             const group = new THREE.Group();
 
-            const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const legMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 });
             const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.9, 12), legMat);
             leftLeg.position.set(-0.2, 0.45, 0);
+            leftLeg.castShadow = true;
             group.add(leftLeg);
 
             const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.9, 12), legMat);
             rightLeg.position.set(0.2, 0.45, 0);
+            rightLeg.castShadow = true;
             group.add(rightLeg);
 
             const coatGeo = new THREE.CylinderGeometry(0.42, 0.38, 1.4, 16);
-            const coatMat = new THREE.MeshStandardMaterial({ color: coatColor, roughness: 0.3 });
+            const coatMat = new THREE.MeshStandardMaterial({ color: coatColor, roughness: 0.5, metalness: 0.1 });
             const coat = new THREE.Mesh(coatGeo, coatMat);
             coat.position.y = 1.6;
+            coat.castShadow = true;
             group.add(coat);
 
             const collarGeo = new THREE.CylinderGeometry(0.45, 0.43, 0.3, 16);
-            const collarMat = new THREE.MeshStandardMaterial({ color: accentColor });
+            const collarMat = new THREE.MeshStandardMaterial({ color: accentColor, roughness: 0.5 });
             const collar = new THREE.Mesh(collarGeo, collarMat);
             collar.position.y = 2.2;
             group.add(collar);
 
             const headGeo = new THREE.SphereGeometry(0.35, 16, 16);
-            const headMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.5 });
+            const headMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.6 });
             const head = new THREE.Mesh(headGeo, headMat);
             head.position.y = 2.5;
+            head.castShadow = true;
             group.add(head);
 
             const visorGeo = new THREE.BoxGeometry(0.5, 0.15, 0.25);
-            const visorMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff });
+            const visorMat = new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.5 });
             const visor = new THREE.Mesh(visorGeo, visorMat);
             visor.position.set(0, 2.55, 0.22);
             group.add(visor);
 
-            const armMat = new THREE.MeshStandardMaterial({ color: coatColor });
+            const armMat = new THREE.MeshStandardMaterial({ color: coatColor, roughness: 0.5 });
             const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.8, 12), armMat);
             leftArm.position.set(-0.52, 1.7, 0.2);
             leftArm.rotation.x = -0.8;
+            leftArm.castShadow = true;
             group.add(leftArm);
 
-            const tablet = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.05), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+            const tablet = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.05), new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.5 }));
             tablet.position.set(-0.52, 1.8, 0.55);
             tablet.rotation.x = -0.5;
             group.add(tablet);
 
             const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.8, 12), armMat);
             rightArm.position.set(0.52, 1.7, 0);
+            rightArm.castShadow = true;
             group.add(rightArm);
 
             group.userData = { leftArm, rightArm, head, tablet };
             return group;
         }
 
-        function buildPlayerCharacter() {
-            const group = new THREE.Group();
-
-            const bodyGeo = new THREE.CylinderGeometry(0.45, 0.45, 1.8, 16);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.3 });
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            body.position.y = 0.9;
-            group.add(body);
-
-            const headGeo = new THREE.SphereGeometry(0.38, 16, 16);
-            const headMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8 });
-            const head = new THREE.Mesh(headGeo, headMat);
-            head.position.y = 2.0;
-            group.add(head);
-
-            const flaskGeo = new THREE.CylinderGeometry(0.18, 0.35, 0.6, 12);
-            const flaskMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.6, transmission: 0.85 });
-            playerFlaskMesh = new THREE.Mesh(flaskGeo, flaskMat);
-            playerFlaskMesh.position.set(0.65, 1.25, 0.5);
-            group.add(playerFlaskMesh);
-
-            group.position.copy(playerPos);
-            playerMesh = group;
-            scene.add(playerMesh);
-        }
-
-        function buildStage1Funnel() {
-            const group = new THREE.Group();
-            group.position.set(STAGE_X[0], 0, 0);
-
-            const funnelGeo = new THREE.CylinderGeometry(3.2, 0.8, 4.2, 32, 1, true);
-            const funnelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2, side: THREE.DoubleSide });
-            const funnel = new THREE.Mesh(funnelGeo, funnelMat);
-            group.add(funnel);
-
-            const lipGeo = new THREE.TorusGeometry(3.2, 0.25, 16, 32);
-            const lipMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-            const lip = new THREE.Mesh(lipGeo, lipMat);
-            lip.rotation.x = Math.PI / 2;
-            lip.position.y = 2.1;
-            group.add(lip);
-
-            scene.add(group);
-        }
-
-        // STAGE 2: Restored Holographic Badges (DM, DA, BA)
-        function buildStage2Scientists() {
-            const group = new THREE.Group();
-            group.position.set(STAGE_X[1], 0, 0);
-
-            const vatGeo = new THREE.CylinderGeometry(2.2, 2.2, 3.2, 24);
-            const vatMat = new THREE.MeshPhysicalMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.5, roughness: 0.1 });
-            const vat = new THREE.Mesh(vatGeo, vatMat);
-            group.add(vat);
-
-            stage2VatFluid = new THREE.Mesh(
-                new THREE.CylinderGeometry(2.0, 2.0, 2.8, 24),
-                new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.6 })
-            );
-            group.add(stage2VatFluid);
-
-            for (let s = 0; s < 2; s++) {
-                const scanner = new THREE.Mesh(
-                    new THREE.RingGeometry(0.5, 2.1, 32),
-                    new THREE.MeshBasicMaterial({ color: 0xfcb316, side: THREE.DoubleSide, transparent: true, opacity: 0.7 })
-                );
-                scanner.rotation.x = Math.PI / 2;
-                scanner.position.y = -1.0 + s * 2.0;
-                stage2Scanners.push(scanner);
-                group.add(scanner);
-            }
-
-            const docNames = ["DM", "DA", "BA"];
-            const angles = [0, (Math.PI * 2) / 3, (Math.PI * 4) / 3];
-
-            for (let i = 0; i < 3; i++) {
-                const docGroup = createDoctorCharacterModel(0xf8fafc, 0xd97706);
-                docGroup.position.set(Math.cos(angles[i]) * 3.6, -0.5, Math.sin(angles[i]) * 3.6);
-                docGroup.rotation.y = -angles[i] + Math.PI / 2;
-
-                const nameBadge = createCharacterNameBadge(docNames[i], 0xfcb316);
-                nameBadge.position.set(0, 3.4, 0);
-                docGroup.add(nameBadge);
-
-                stage2Scientists.push(docGroup);
-                group.add(docGroup);
-            }
-
-            scene.add(group);
-        }
-
-        function buildStage3GreenFluidReactor() {
-            const group = new THREE.Group();
-            group.position.set(STAGE_X[2], 0, 0);
-
-            const basePlate = new THREE.Mesh(
-                new THREE.BoxGeometry(11.0, 0.4, 7.0),
-                new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.3 })
-            );
-            basePlate.position.y = -3.2;
-            group.add(basePlate);
-
-            const vesselGeo = new THREE.CylinderGeometry(3.0, 3.0, 10.0, 32, 1, true);
-            const vesselMat = new THREE.MeshPhysicalMaterial({ color: 0x84cc16, transparent: true, opacity: 0.35, transmission: 0.8, roughness: 0.05 });
-            const vessel = new THREE.Mesh(vesselGeo, vesselMat);
-            vessel.position.set(-2.0, 2.0, 0);
-            group.add(vessel);
-
-            const capGeo = new THREE.CylinderGeometry(3.4, 3.4, 0.8, 32);
-            const capMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
-            
-            const topCap = new THREE.Mesh(capGeo, capMat);
-            topCap.position.set(-2.0, 7.2, 0);
-            group.add(topCap);
-
-            const baseCap = new THREE.Mesh(capGeo, capMat);
-            baseCap.position.set(-2.0, -3.1, 0);
-            group.add(baseCap);
-
-            const fluidGeo = new THREE.CylinderGeometry(2.7, 2.7, 9.2, 32);
-            const fluidMat = new THREE.MeshStandardMaterial({ color: 0x84cc16, emissive: 0x4d7c0f, emissiveIntensity: 0.8, transparent: true, opacity: 0.85 });
-            stage3FluidMesh = new THREE.Mesh(fluidGeo, fluidMat);
-            stage3FluidMesh.position.set(-2.0, 2.0, 0);
-            group.add(stage3FluidMesh);
-
-            for (let i = 0; i < 20; i++) {
-                const bGeo = new THREE.SphereGeometry(0.15 + Math.random() * 0.15, 8, 8);
-                const bMat = new THREE.MeshBasicMaterial({ color: 0xd9f99d, transparent: true, opacity: 0.8 });
-                const bMesh = new THREE.Mesh(bGeo, bMat);
-                bMesh.position.set(-2.0 + (Math.random() - 0.5) * 4.0, (Math.random() - 0.5) * 8.0, (Math.random() - 0.5) * 4.0);
-                stage3Bubbles.push(bMesh);
-                group.add(bMesh);
-            }
-
-            for (let a = 0; a < 3; a++) {
-                const arc = new THREE.Mesh(
-                    new THREE.TorusGeometry(3.1, 0.08, 16, 32),
-                    new THREE.MeshBasicMaterial({ color: 0xa3e635 })
-                );
-                arc.rotation.x = Math.PI / 3 * a;
-                arc.position.set(-2.0, 2.0, 0);
-                stage3Arcs.push(arc);
-                group.add(arc);
-            }
-
-            const pipeGroup = new THREE.Group();
-            const pipeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.8, roughness: 0.3 });
-            
-            const verticalPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 8.0, 16), pipeMat);
-            verticalPipe.position.set(-6.2, 2.0, 0);
-            pipeGroup.add(verticalPipe);
-
-            const topElbow = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.5, 16), pipeMat);
-            topElbow.rotation.z = Math.PI / 2;
-            topElbow.position.set(-5.4, 6.0, 0);
-            pipeGroup.add(topElbow);
-
-            const bottomElbow = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.5, 16), pipeMat);
-            bottomElbow.rotation.z = Math.PI / 2;
-            bottomElbow.position.set(-5.4, -2.0, 0);
-            pipeGroup.add(bottomElbow);
-
-            group.add(pipeGroup);
-
-            const consoleGroup = new THREE.Group();
-            consoleGroup.position.set(2.8, -1.0, 0.5);
-
-            const desk = new THREE.Mesh(
-                new THREE.BoxGeometry(4.2, 3.0, 2.8),
-                new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.7, roughness: 0.4 })
-            );
-            consoleGroup.add(desk);
-
-            const panel = new THREE.Mesh(
-                new THREE.BoxGeometry(4.0, 0.3, 2.6),
-                new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8 })
-            );
-            panel.position.set(0, 1.6, 0);
-            panel.rotation.x = 0.2;
-            consoleGroup.add(panel);
-
-            for (let b = 0; b < 5; b++) {
-                const btn = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.22, 0.22, 0.2, 16),
-                    new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0x991b1b, emissiveIntensity: 0.6 })
-                );
-                btn.position.set(-1.4 + b * 0.7, 1.8, 0.4);
-                consoleGroup.add(btn);
-            }
-
-            const screenFrame = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.6, 0.2), capMat);
-            screenFrame.position.set(-0.8, 3.2, -0.6);
-            consoleGroup.add(screenFrame);
-
-            const screenGlow = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 1.4), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
-            screenGlow.position.set(-0.8, 3.2, -0.49);
-            consoleGroup.add(screenGlow);
-
-            group.add(consoleGroup);
-            scene.add(group);
-        }
-
-        // STAGE 4: Restored Holographic Badges (T1-TOM to T5-SQUAD)
         function buildStage4SciFiReactionBay() {
             const group = new THREE.Group();
             group.position.set(STAGE_X[3], 0, 0);
@@ -1295,15 +1646,16 @@
             for (let s = 0; s < 6; s++) {
                 const rack = new THREE.Mesh(
                     new THREE.BoxGeometry(1.5, 5.0, 1.2),
-                    new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 })
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.3 })
                 );
                 rack.position.set(-6 + s * 2.4, 0, -8);
+                rack.castShadow = true;
                 group.add(rack);
 
                 for (let l = 0; l < 4; l++) {
                     const led = new THREE.Mesh(
                         new THREE.PlaneGeometry(1.0, 0.15),
-                        new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+                        new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.5 })
                     );
                     led.position.set(-6 + s * 2.4, -1.5 + l * 1.0, -7.39);
                     group.add(led);
@@ -1319,20 +1671,22 @@
 
                 const baseRing = new THREE.Mesh(
                     new THREE.CylinderGeometry(1.4, 1.6, 0.6, 16),
-                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8 })
+                    new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.8, roughness: 0.3 })
                 );
                 baseRing.position.y = -2.7;
+                baseRing.castShadow = true;
                 podGroup.add(baseRing);
 
                 const glassPod = new THREE.Mesh(
                     new THREE.CylinderGeometry(1.0, 1.0, 4.0, 16),
-                    new THREE.MeshPhysicalMaterial({ color: DOMAINS[i].color, transparent: true, opacity: 0.4, transmission: 0.7 })
+                    new THREE.MeshStandardMaterial({ color: DOMAINS[i].color, transparent: true, opacity: 0.35, roughness: 0.1 })
                 );
+                glassPod.castShadow = true;
                 podGroup.add(glassPod);
 
                 const innerRing = new THREE.Mesh(
                     new THREE.TorusGeometry(0.85, 0.08, 16, 32),
-                    new THREE.MeshBasicMaterial({ color: DOMAINS[i].color })
+                    new THREE.MeshStandardMaterial({ color: DOMAINS[i].color, roughness: 0.5 })
                 );
                 innerRing.rotation.x = Math.PI / 2;
                 podGroup.add(innerRing);
@@ -1355,20 +1709,19 @@
             scene.add(group);
         }
 
-        // STAGE 5: Size Hierarchy Output Crystals
         function buildStage5CrystalVaults() {
             const group = new THREE.Group();
             group.position.set(STAGE_X[4], 0, 0);
 
-            // 1. ALIS Crystal - LARGE
             const alisGroup = new THREE.Group();
             alisGroup.position.set(0, 0, -6.5);
             
             const alisCrystal = new THREE.Mesh(
                 new THREE.CylinderGeometry(0.3, 2.2, 5.5, 6),
-                new THREE.MeshStandardMaterial({ color: 0x00f3ff, emissive: 0x0284c7, roughness: 0.1 })
+                new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.2, metalness: 0.3 })
             );
             alisCrystal.position.y = 1.2;
+            alisCrystal.castShadow = true;
             alisGroup.add(alisCrystal);
 
             const alisBadge = create3DCrystalLabel("ALIS", 0x00f3ff);
@@ -1378,15 +1731,15 @@
             group.add(alisGroup);
             stage5Crystals.ALIS = alisCrystal;
 
-            // 2. CRM Crystal - MEDIUM
             const crmGroup = new THREE.Group();
             crmGroup.position.set(0, 0, -2.2);
 
             const crmCrystal = new THREE.Mesh(
                 new THREE.OctahedronGeometry(1.8, 0),
-                new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, roughness: 0.1 })
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.3 })
             );
             crmCrystal.position.y = 1.0;
+            crmCrystal.castShadow = true;
             crmGroup.add(crmCrystal);
 
             const crmBadge = create3DCrystalLabel("CRM", 0xf59e0b);
@@ -1396,15 +1749,15 @@
             group.add(crmGroup);
             stage5Crystals.CRM = crmCrystal;
 
-            // 3. CLARA Crystal - MEDIUM
             const claraGroup = new THREE.Group();
             claraGroup.position.set(0, 0, 2.2);
 
             const claraCrystal = new THREE.Mesh(
                 new THREE.IcosahedronGeometry(1.6, 0),
-                new THREE.MeshStandardMaterial({ color: 0xe11d48, emissive: 0xbe123c, roughness: 0.1 })
+                new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.2, metalness: 0.3 })
             );
             claraCrystal.position.y = 1.0;
+            claraCrystal.castShadow = true;
             claraGroup.add(claraCrystal);
 
             const claraBadge = create3DCrystalLabel("CLARA", 0xe11d48);
@@ -1414,15 +1767,15 @@
             group.add(claraGroup);
             stage5Crystals.CLARA = claraCrystal;
 
-            // 4. RESPONDERS Crystal - SMALL
             const respondersGroup = new THREE.Group();
             respondersGroup.position.set(0, 0, 6.5);
 
             const respondersCrystal = new THREE.Mesh(
                 new THREE.DodecahedronGeometry(1.0, 0),
-                new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.8, roughness: 0.1 })
+                new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.2, metalness: 0.3 })
             );
             respondersCrystal.position.y = 0.8;
+            respondersCrystal.castShadow = true;
             respondersGroup.add(respondersCrystal);
 
             const respondersBadge = create3DCrystalLabel("RESPOND", 0x10b981);
@@ -1440,23 +1793,319 @@
             scene.add(group);
         }
 
-        function buildConduits() {
-            const pipeMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.3 });
-            for (let i = 0; i < STAGE_X.length - 1; i++) {
-                const len = STAGE_X[i+1] - STAGE_X[i];
-                const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, len, 8), pipeMat);
-                pipe.rotation.z = -Math.PI / 2;
-                pipe.position.set(STAGE_X[i] + len / 2, -1.5, 0);
-                scene.add(pipe);
+        // --- SECTION 3: LIVE / TARGET SYSTEM ---
+        function buildSection3LiveTargetSystem() {
+            const group = new THREE.Group();
+            group.position.set(SECTION_X.live, 0, 0);
 
-                const particle = new THREE.Mesh(
-                    new THREE.SphereGeometry(0.3, 8, 8),
-                    new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+            const backWall = new THREE.Mesh(
+                new THREE.PlaneGeometry(30, 15),
+                new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.4, metalness: 0.6 })
+            );
+            backWall.position.set(0, 4.5, -5);
+            backWall.receiveShadow = true;
+            group.add(backWall);
+
+            // CORRECTION 4: Laserfiche label shifted down & reduced in size, placed right above central analytical board
+            const laserficheHeader = create3DCrystalLabel("Laserfiche", 0x38bdf8);
+            laserficheHeader.position.set(0, 9.2, -4.2);
+            laserficheHeader.scale.set(6.0, 1.8, 1);
+            group.add(laserficheHeader);
+
+            for (let t = 0; t < 5; t++) {
+                const trussBar = new THREE.Mesh(
+                    new THREE.BoxGeometry(30, 0.25, 0.25),
+                    new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.2 })
                 );
-                particle.position.set(STAGE_X[i], -1.5, 0);
-                stage4ConduitParticles.push({ mesh: particle, startX: STAGE_X[i], len });
-                scene.add(particle);
+                trussBar.position.set(0, 11, -4 + t * 2.2);
+                trussBar.castShadow = true;
+                group.add(trussBar);
+
+                const conduit = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.18, 8, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.5 })
+                );
+                conduit.position.set(-15, 11, -4 + t * 2.2);
+                ceilingConduitFlow.push(conduit);
+                group.add(conduit);
             }
+
+            for (let l = 0; l < 4; l++) {
+                const cord = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.02, 0.02, 2.5, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 })
+                );
+                cord.position.set(-10.5 + l * 7.0, 9.8, 0);
+                group.add(cord);
+
+                const bulb = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.35, 16, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.9, roughness: 0.3 })
+                );
+                bulb.position.set(-10.5 + l * 7.0, 8.4, 0);
+                group.add(bulb);
+            }
+
+            const glassWall = new THREE.Mesh(
+                new THREE.PlaneGeometry(28, 12),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, transparent: true, opacity: 0.35, roughness: 0.1 })
+            );
+            glassWall.position.set(0, 3.5, -4.5);
+            group.add(glassWall);
+
+            for (let r = 0; r < 2; r++) {
+                const shelf = new THREE.Mesh(
+                    new THREE.BoxGeometry(26, 0.25, 1.2),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.3 })
+                );
+                shelf.position.set(0, 3.0 + r * 3.2, -4.2);
+                shelf.castShadow = true;
+                group.add(shelf);
+
+                for (let b = 0; b < 12; b++) {
+                    const bottle = new THREE.Mesh(
+                        new THREE.CylinderGeometry(0.25, 0.25, 1.1, 12),
+                        new THREE.MeshStandardMaterial({ color: DOMAINS[b % 5].color, transparent: true, opacity: 0.7, roughness: 0.2 })
+                    );
+                    bottle.position.set(-11 + b * 2.0, 3.7 + r * 3.2, -4.2);
+                    bottle.castShadow = true;
+                    group.add(bottle);
+                }
+            }
+
+            const commandHubGroup = new THREE.Group();
+            commandHubGroup.position.set(0, 6.8, -4.3);
+
+            for (let m = -1; m <= 1; m++) {
+                const screenSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180">
+                    <rect width="300" height="180" fill="rgba(2,132,199,0.25)" stroke="#38bdf8" stroke-width="6"/>
+                    <path d="M20 140 Q 75 40, 150 100 T 280 60" fill="none" stroke="#00f3ff" stroke-width="4"/>
+                    <line x1="20" y1="150" x2="280" y2="150" stroke="#38bdf8" stroke-width="2"/>
+                    <circle cx="150" cy="100" r="6" fill="#f59e0b"/>
+                </svg>`;
+                const screenTex = generateSVGTexture(screenSvg, 300, 180);
+                const screen = new THREE.Mesh(
+                    new THREE.PlaneGeometry(4.2, 2.4),
+                    new THREE.MeshStandardMaterial({ map: screenTex, transparent: true, opacity: 0.9, side: THREE.DoubleSide, roughness: 0.4 })
+                );
+                screen.position.set(m * 4.6, 0, (Math.abs(m) === 1 ? -0.4 : 0));
+                screen.rotation.y = -m * 0.25;
+                commandHubGroup.add(screen);
+            }
+
+            holographicMolecule = new THREE.Group();
+            holographicMolecule.position.set(0, -1.8, 1.2);
+
+            const molCore = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(0.8, 1),
+                new THREE.MeshStandardMaterial({ color: 0x00f3ff, wireframe: true, roughness: 0.5 })
+            );
+            holographicMolecule.add(molCore);
+
+            for (let a = 0; a < 4; a++) {
+                const atom = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.2, 8, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.5 })
+                );
+                atom.position.set(Math.cos(a * Math.PI / 2) * 1.5, Math.sin(a * Math.PI / 2) * 1.5, 0);
+                holographicMolecule.add(atom);
+            }
+
+            commandHubGroup.add(holographicMolecule);
+            group.add(commandHubGroup);
+
+            const mainBench = new THREE.Mesh(
+                new THREE.BoxGeometry(26, 2.2, 5.0),
+                new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.1 })
+            );
+            mainBench.position.set(0, -1.8, 0);
+            mainBench.castShadow = true;
+            mainBench.receiveShadow = true;
+            group.add(mainBench);
+
+            laserGridMesh = new THREE.GridHelper(24, 20, 0x00f3ff, 0x0284c7);
+            laserGridMesh.position.set(0, -0.68, 0);
+            group.add(laserGridMesh);
+
+            // 3 Mini Linked Crystals (ALIS, CLARA, CRM)
+            liveMiniCrystalsGroup = new THREE.Group();
+            liveMiniCrystalsGroup.position.set(0, -2.2, 3.8);
+
+            const miniAlis = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.1, 0.4, 1.0, 6),
+                new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.2, metalness: 0.4 })
+            );
+            miniAlis.position.set(-2.5, 0, 0);
+            liveMiniCrystalsGroup.add(miniAlis);
+
+            const miniCrm = new THREE.Mesh(
+                new THREE.OctahedronGeometry(0.4, 0),
+                new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.4 })
+            );
+            miniCrm.position.set(0, 0, 0);
+            liveMiniCrystalsGroup.add(miniCrm);
+
+            const miniClara = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(0.4, 0),
+                new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.2, metalness: 0.4 })
+            );
+            miniClara.position.set(2.5, 0, 0);
+            liveMiniCrystalsGroup.add(miniClara);
+
+            const laserLineGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-2.5, 0, 0),
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(2.5, 0, 0)
+            ]);
+            const laserLineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
+            const laserLine = new THREE.Line(laserLineGeo, laserLineMat);
+            liveMiniCrystalsGroup.add(laserLine);
+
+            group.add(liveMiniCrystalsGroup);
+
+            roboticArm = new THREE.Group();
+            roboticArm.position.set(-2.0, -0.6, -1.5);
+
+            const rBase = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.6, 0.7, 0.4, 16),
+                new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.2 })
+            );
+            rBase.castShadow = true;
+            roboticArm.add(rBase);
+
+            roboticJoint = new THREE.Group();
+            roboticJoint.position.y = 0.4;
+
+            const rArm = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.12, 1.8, 12),
+                new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.7, roughness: 0.3 })
+            );
+            rArm.position.y = 0.9;
+            rArm.rotation.z = -0.4;
+            rArm.castShadow = true;
+            roboticJoint.add(rArm);
+
+            roboticHead = new THREE.Mesh(
+                new THREE.ConeGeometry(0.25, 0.6, 12),
+                new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.5 })
+            );
+            roboticHead.position.set(0.6, 1.7, 0);
+            roboticHead.rotation.z = Math.PI;
+            roboticJoint.add(roboticHead);
+
+            roboticArm.add(roboticJoint);
+            group.add(roboticArm);
+
+            for (let c = 0; c < 2; c++) {
+                const centGroup = new THREE.Group();
+                centGroup.position.set(4.0 + c * 5.0, -0.4, -1.2);
+
+                const centBody = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.8, 0.9, 0.8, 20),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.3 })
+                );
+                centBody.castShadow = true;
+                centGroup.add(centBody);
+
+                const centRotor = new THREE.Mesh(
+                    new THREE.TorusGeometry(0.5, 0.08, 12, 24),
+                    new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.5 })
+                );
+                centRotor.rotation.x = Math.PI / 2;
+                centRotor.position.y = 0.42;
+                centGroup.add(centRotor);
+
+                centrifuges.push(centRotor);
+                group.add(centGroup);
+            }
+
+            for (let m = 0; m < 2; m++) {
+                const scopeGroup = new THREE.Group();
+                scopeGroup.position.set(-8 + m * 16, -0.6, 0);
+
+                const scopeBase = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.6, 0.4, 1.8),
+                    new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.3 })
+                );
+                scopeBase.castShadow = true;
+                scopeGroup.add(scopeBase);
+
+                const scopeArm = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.18, 0.22, 2.2, 16),
+                    new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.5, roughness: 0.4 })
+                );
+                scopeArm.position.set(-0.3, 1.1, -0.3);
+                scopeArm.rotation.z = -0.2;
+                scopeArm.castShadow = true;
+                scopeGroup.add(scopeArm);
+
+                const scopeHead = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.3, 0.2, 1.2, 16),
+                    new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4 })
+                );
+                scopeHead.position.set(0.2, 1.8, 0);
+                scopeHead.rotation.z = 0.3;
+                scopeGroup.add(scopeHead);
+
+                const laser = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8),
+                    new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.5 })
+                );
+                laser.position.set(0.1, 0.8, 0);
+                scopeGroup.add(laser);
+
+                group.add(scopeGroup);
+            }
+
+            const utensilColors = [0x00f3ff, 0x00ff88, 0xffa500, 0x9d00ff, 0xff0055];
+            for (let u = 0; u < 10; u++) {
+                const xPos = -10 + u * 2.2;
+
+                const flask = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.55, 1.6, 16),
+                    new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, roughness: 0.2 })
+                );
+                flask.position.set(xPos, -0.1, 1.5);
+                flask.castShadow = true;
+                group.add(flask);
+
+                const fluid = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.45, 1.0, 16),
+                    new THREE.MeshStandardMaterial({ color: utensilColors[u % 5], roughness: 0.3 })
+                );
+                fluid.position.set(xPos, -0.35, 1.5);
+                group.add(fluid);
+
+                const bMesh = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.08, 8, 8),
+                    new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 })
+                );
+                bMesh.position.set(xPos, -0.2, 1.5);
+                liveBubbles.push(bMesh);
+                group.add(bMesh);
+            }
+
+            const doctorX = [-9, -4.5, 0, 4.5, 9];
+            for (let d = 0; d < 5; d++) {
+                const doctor = createDoctorCharacterModel(0x0284c7, 0x00f3ff);
+                doctor.position.set(doctorX[d], -0.7, (d % 2 === 0 ? -1.8 : 1.8));
+                doctor.rotation.y = (d % 2 === 0 ? 0 : Math.PI);
+
+                if (d === 0) {
+                    const cxBadge = createCharacterNameBadge("CXONE", 0x38bdf8);
+                    cxBadge.position.set(0, 3.4, 0);
+                    doctor.add(cxBadge);
+                } else if (d === 4) {
+                    const respBadge = createCharacterNameBadge("RESPOND", 0x34d399);
+                    respBadge.position.set(0, 3.4, 0);
+                    doctor.add(respBadge);
+                }
+
+                liveScientists.push(doctor);
+                group.add(doctor);
+            }
+
+            scene.add(group);
         }
 
         function handleInteractKey() {
@@ -1490,10 +2139,11 @@
 
         function spawnAndProcessDomainGem(domain, idx) {
             const gemGeo = new THREE.DodecahedronGeometry(0.5, 0);
-            const gemMat = new THREE.MeshStandardMaterial({ color: domain.color, emissive: domain.color, emissiveIntensity: 0.8 });
+            const gemMat = new THREE.MeshStandardMaterial({ color: domain.color, roughness: 0.3 });
             const gem = new THREE.Mesh(gemGeo, gemMat);
 
             gem.position.set(STAGE_X[0], 2.0, 0);
+            gem.castShadow = true;
             scene.add(gem);
 
             const targets = ["ALIS", "CRM", "CLARA", "RESPONDERS"];
@@ -1526,17 +2176,21 @@
                 onStart: () => {
                     gsap.to(stage2VatFluid.scale, { y: 1.2, duration: 0.3, yoyo: true, repeat: 5 });
                     stage2Scientists.forEach(doc => {
-                        gsap.to(doc.userData.rightArm.rotation, { x: -0.6, duration: 0.2, yoyo: true, repeat: 6 });
+                        if (doc.userData && doc.userData.rightArm) {
+                            gsap.to(doc.userData.rightArm.rotation, { x: -0.6, duration: 0.2, yoyo: true, repeat: 6 });
+                        }
                     });
                 }
             });
 
-            tline.to(gem.position, { x: STAGE_X[2] - 2.0, y: 2.0, duration: 1.8, ease: "power1.inOut" });
+            tline.to(gem.position, { x: STAGE_X[2], y: 3.3, duration: 1.8, ease: "power1.inOut" });
 
             tline.to(gem.position, {
                 duration: 2.0,
                 onStart: () => {
-                    gsap.to(stage3FluidMesh.scale, { x: 1.1, z: 1.1, duration: 0.2, yoyo: true, repeat: 6 });
+                    if (stage3HelixGroup) {
+                        gsap.to(stage3HelixGroup.scale, { x: 1.25, z: 1.25, duration: 0.2, yoyo: true, repeat: 6 });
+                    }
                 }
             });
 
@@ -1597,23 +2251,23 @@
 
         function focusSection(sectionKey) {
             const targetX = SECTION_X[sectionKey];
-            gsap.to(camera.position, { x: targetX, y: 15, z: 35, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(camera.position, { x: targetX, y: 16.5, z: 38.5, duration: 1.5, ease: "power2.inOut" });
             gsap.to(controls.target, { x: targetX, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" });
         }
 
         function focusStage(stageIndex) {
             const targetX = STAGE_X[stageIndex];
-            gsap.to(camera.position, { x: targetX, y: 10, z: 20, duration: 1.2, ease: "power2.inOut" });
+            gsap.to(camera.position, { x: targetX, y: 11, z: 22, duration: 1.2, ease: "power2.inOut" });
             gsap.to(controls.target, { x: targetX, y: 0, z: 0, duration: 1.2, ease: "power2.inOut" });
         }
 
         function resetCameraView() {
-            gsap.to(camera.position, { x: 0, y: 22, z: 48, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(camera.position, { x: 0, y: 24.2, z: 52.8, duration: 1.5, ease: "power2.inOut" });
             gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" });
         }
 
         function focusGlobalView2() {
-            gsap.to(camera.position, { x: 0, y: 50, z: 150, duration: 2.0, ease: "power2.inOut" });
+            gsap.to(camera.position, { x: 0, y: 55, z: 165, duration: 2.0, ease: "power2.inOut" });
             gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 2.0, ease: "power2.inOut" });
         }
 
@@ -1624,7 +2278,7 @@
 
             const time = Date.now();
 
-            // --- Section 1 Animations ---
+            // Section 1 Animations
             if (alchemistArm) {
                 alchemistArm.rotation.z = Math.sin(time * 0.003) * 0.2;
                 alchemistVessel.rotation.z = Math.cos(time * 0.003) * 0.15;
@@ -1634,9 +2288,6 @@
             }
             if (pendulumRod) {
                 pendulumRod.rotation.z = Math.sin(time * 0.002) * 0.25;
-            }
-            if (deskLanternLight) {
-                deskLanternLight.intensity = 1.5 + Math.sin(time * 0.01) * 0.4;
             }
 
             legacyBubbles.forEach(b => {
@@ -1649,7 +2300,54 @@
                 if (s.position.y > 3.8) s.position.y = 2.6;
             });
 
-            // --- Section 3 Animations ---
+            // Stage 2 Seated Working Animations
+            stage2Scientists.forEach((doc) => {
+                if (!doc.userData) return;
+                
+                if (doc.userData.role === 'DM') {
+                    doc.userData.rightArm.rotation.x = -0.9 + Math.sin(time * 0.003) * 0.2;
+                    doc.userData.rightArm.rotation.z = Math.cos(time * 0.002) * 0.1;
+                    doc.userData.head.rotation.y = Math.sin(time * 0.002) * 0.18;
+                    doc.userData.torso.rotation.x = 0.1 + Math.sin(time * 0.003) * 0.03;
+                } else if (doc.userData.role === 'DA') {
+                    doc.userData.rightArm.rotation.x = -1.0 + Math.cos(time * 0.006) * 0.2;
+                    doc.userData.leftArm.rotation.x = -0.8 + Math.sin(time * 0.003) * 0.1;
+                    if (doc.userData.rBoard) {
+                        doc.userData.rBoard.rotation.z = Math.sin(time * 0.003) * 0.08;
+                    }
+                    doc.userData.head.rotation.x = Math.sin(time * 0.002) * 0.12;
+                } else if (doc.userData.role === 'BA') {
+                    doc.userData.leftArm.rotation.x = -1.15 + Math.sin(time * 0.012) * 0.12;
+                    doc.userData.rightArm.rotation.x = -1.15 + Math.cos(time * 0.012) * 0.12;
+                    doc.userData.head.rotation.y = Math.sin(time * 0.003) * 0.08;
+                    doc.userData.head.rotation.x = 0.08 + Math.cos(time * 0.002) * 0.04;
+                }
+            });
+
+            // Stage 3 Energy Reactor Core Animations
+            if (stage3HelixGroup) {
+                stage3HelixGroup.rotation.y += 0.025;
+            }
+            if (stage3CoreOrb) {
+                stage3CoreOrb.rotation.y += 0.03;
+                stage3CoreOrb.rotation.x += 0.015;
+            }
+            stage3FloatingLabels.forEach(lbl => {
+                lbl.position.y = lbl.userData.initialY + Math.sin(time * 0.003 + lbl.userData.offset) * 0.45;
+            });
+
+            if (stage3ParticleGeo) {
+                const positions = stage3ParticleGeo.attributes.position.array;
+                for (let p = 0; p < 400; p++) {
+                    positions[p * 3 + 1] += 0.05;
+                    if (positions[p * 3 + 1] > 7.8) {
+                        positions[p * 3 + 1] = -1.2;
+                    }
+                }
+                stage3ParticleGeo.attributes.position.needsUpdate = true;
+            }
+
+            // Section 3 Animations
             if (holographicMolecule) {
                 holographicMolecule.rotation.y += 0.02;
                 holographicMolecule.rotation.x += 0.01;
@@ -1657,6 +2355,9 @@
             if (roboticArm) {
                 roboticJoint.rotation.y = Math.sin(time * 0.0015) * 0.5;
                 roboticHead.rotation.x = Math.cos(time * 0.003) * 0.3;
+            }
+            if (liveMiniCrystalsGroup) {
+                liveMiniCrystalsGroup.rotation.y = Math.sin(time * 0.002) * 0.2;
             }
 
             centrifuges.forEach(c => {
@@ -1673,35 +2374,18 @@
                 if (b.position.y > 0.4) b.position.y = -0.3;
             });
 
-            // --- Doctor & Scientist Idle Animations ---
-            stage2Scientists.concat(stage4Doctors).concat(liveScientists).forEach((doc, i) => {
-                doc.position.y = -0.5 + Math.sin(time * 0.003 + i) * 0.05;
-                doc.userData.head.rotation.y = Math.sin(time * 0.002 + i) * 0.15;
+            stage4Doctors.concat(liveScientists).forEach((doc, i) => {
+                if (doc.userData && doc.userData.head) {
+                    doc.userData.head.rotation.y = Math.sin(time * 0.002 + i) * 0.15;
+                }
             });
 
-            // --- Stage 2 Scanner Rings ---
             stage2Scanners.forEach((sc, i) => {
-                sc.position.y += Math.sin(time * 0.004 + i) * 0.01;
+                sc.position.y += Math.sin(time * 0.004 + i) * 0.005;
             });
 
-            // --- Stage 3 Green Reactor Bubbles & Plasma Arcs ---
-            stage3Bubbles.forEach(b => {
-                b.position.y += 0.035;
-                if (b.position.y > 6.0) b.position.y = -2.0;
-            });
-            stage3Arcs.forEach((arc, i) => {
-                arc.rotation.z += 0.02 * (i + 1);
-            });
-
-            // --- Stage 4 Pod Energy Rings ---
             stage4Pods.forEach((pod, i) => {
                 pod.innerRing.position.y = Math.sin(time * 0.004 + i) * 1.5;
-            });
-
-            // --- Conduit Flow Particles ---
-            stage4ConduitParticles.forEach(cp => {
-                cp.mesh.position.x += 0.4;
-                if (cp.mesh.position.x > cp.startX + cp.len) cp.mesh.position.x = cp.startX;
             });
 
             controls.update();
