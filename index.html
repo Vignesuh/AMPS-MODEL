@@ -133,7 +133,7 @@
             <span class="w-10 h-10 font-orbitron font-black text-xl rounded-xl flex items-center justify-center animate-key" style="width: 2.5rem; height: 2.5rem; background-color: #38bdf8; color: #020617;">E</span>
             <div class="flex flex-col">
                 <span id="prompt-action" class="font-orbitron text-sm font-bold tracking-wide" style="color: #67e8f9;">POUR REQUIREMENTS</span>
-                <span style="font-size: 0.75rem; color: #cbd5e1;">Tilt beaker to pour 5 Domain Gems from Legacy System into Stage 1 Funnel</span>
+                <span style="font-size: 0.75rem; color: #cbd5e1;">Tilt beaker to pour 5 Domain Gems. Press SPACE to Pause/Resume.</span>
             </div>
         </div>
     </div>
@@ -151,7 +151,7 @@
                     <h1 class="font-orbitron font-black tracking-wider leading-tight" style="font-size: 0.95rem; color: #67e8f9;">
                         AMPS DATA REACTOR
                     </h1>
-                    <p style="font-size: 0.625rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 0.125rem;">Legacy Lab &rarr; Migration Core &rarr; Modern Target Lab</p>
+                    <p style="font-size: 0.625rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 0.125rem;">Legacy Lab &rarr; DQ Intake 1 &rarr; Migration Core &rarr; DQ Intake 2 &rarr; Live System</p>
                 </div>
             </div>
 
@@ -214,7 +214,11 @@
                     <i class="fa-solid fa-flask"></i> 1. Legacy System
                 </button>
 
-                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.25rem;"></div>
+                <button onclick="focusDQTeam(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
+                    <i class="fa-solid fa-shield-halved"></i> DQ Team 1
+                </button>
+
+                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.125rem;"></div>
 
                 <button onclick="focusStage(0)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 1</button>
                 <button onclick="focusStage(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 2</button>
@@ -222,7 +226,11 @@
                 <button onclick="focusStage(3)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 4</button>
                 <button onclick="focusStage(4)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #cbd5e1;">Stage 5</button>
 
-                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.25rem;"></div>
+                <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.125rem;"></div>
+
+                <button onclick="focusDQTeam(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
+                    <i class="fa-solid fa-shield-halved"></i> DQ Team 2
+                </button>
 
                 <button onclick="focusSection('live')" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1.5" style="font-size: 0.75rem; color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">
                     <i class="fa-solid fa-network-wired"></i> 3. Live / Target System
@@ -239,10 +247,16 @@
                 </button>
             </div>
 
-            <div class="glass-panel p-4 rounded-2xl flex items-center gap-6" style="pointer-events: auto;">
+            <!-- Bottom Right Controls Box with Small Pause Symbol Indicator -->
+            <div class="glass-panel p-4 rounded-2xl flex items-center gap-4" style="pointer-events: auto;">
                 <div class="flex flex-col">
-                    <span style="font-size: 0.625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;">Controls</span>
-                    <span class="font-orbitron font-bold" style="font-size: 0.75rem; color: #67e8f9;">WASD / Arrow Keys Move</span>
+                    <div class="flex items-center gap-2">
+                        <span style="font-size: 0.625rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;">Controls</span>
+                        <span id="pause-symbol-badge" class="px-1.5 py-0.5 rounded text-xs font-bold hidden" style="background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid #f59e0b;">
+                            <i class="fa-solid fa-pause"></i>
+                        </span>
+                    </div>
+                    <span class="font-orbitron font-bold" style="font-size: 0.75rem; color: #67e8f9;">WASD Move | Space Pause</span>
                 </div>
 
                 <div style="height: 2rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
@@ -265,16 +279,16 @@
                 </div>
                 <div>
                     <h2 class="font-orbitron font-extrabold text-2xl" style="color: #67e8f9;">AMPS DATA REACTOR ARCHITECTURE</h2>
-                    <p style="font-size: 0.75rem; color: #94a3b8;">Legacy System &rarr; Migration Factory &rarr; Live System</p>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Legacy System &rarr; DQ Intake 1 &rarr; Migration Core &rarr; DQ Intake 2 &rarr; Live System</p>
                 </div>
             </div>
 
             <p style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.625; margin-bottom: 1.5rem;">
-                Explore 3 macro-sections with fully animated 3D environments:
-                <br>&bull; <strong>Section 1 (Left): Legacy System Lab</strong> &mdash; SCMS funnel, IBP Chemical Flask, PEGA Cupboard Setup, Aegon Wall Board, steam particles, and alchemist pouring sequence.
-                <br>&bull; <strong>Section 2 (Center): Migration Core</strong> &mdash; 5-stage pipeline featuring Stage 2 Onshore Catalyst Lab with Delivery Manager, Business Analyst, and Data Architect; Stage 3 Energy Reactor Core with animated floating Sprint Planning & 2 Weeks Sprint labels.
-                <br>&bull; <strong>Section 3 (Right): Live / Target System</strong> &mdash; Laserfiche Header near command board, CXONE & RESPOND Doctor Stations, Linked Mini Output Crystals, and centrifuges.
-                <br><br>Use <strong>`GLOBAL VIEW`</strong> to view all 3 macro-sections together!
+                Explore 3 macro-sections with refined spacing and forward-placed output crystals:
+                <br>&bull; <strong>Legacy &amp; DQ Team 1 Intake</strong> &mdash; SCMS, IBP, PEGA setup &amp; rotated Laser Wall with animated pipeline data beads.
+                <br>&bull; <strong>Migration Factory</strong> &mdash; 5-stage pipeline with Stage 4 shifted closer to Stage 5, including DVS (Test Automation) Control Station.
+                <br>&bull; <strong>DQ Team 2 &amp; Live Target System</strong> &mdash; 100%+ enlarged ALIS, CRM, CLARA crystals shifted an additional 150% forward (+Z direction) on the bench.
+                <br>&bull; <strong>Controls</strong> &mdash; Press <strong>`SPACE`</strong> anytime to toggle animation pause/resume!
             </p>
 
             <button onclick="startGame()" class="w-full py-4 font-orbitron font-extrabold rounded-2xl flex items-center justify-center gap-3" style="background: linear-gradient(to right, #06b6d4, #2563eb, #4f46e5); color: #ffffff; border: none; cursor: pointer; font-size: 1rem;">
@@ -334,9 +348,11 @@
     <script>
         let scene, camera, renderer, composer, controls;
         let isGameRunning = false;
+        let isPaused = false;
 
-        const SECTION_X = { legacy: -85, factory: 0, live: 85 };
-        const STAGE_X = [-36, -18, 0, 20, 40];
+        const SECTION_X = { legacy: -98.0, factory: 0, live: 98.0 };
+        const DQ_X = { team1: -62.0, team2: 62.0 };
+        const STAGE_X = [-40.0, -20.0, 0, 25.0, 40.0];
 
         const DOMAINS = [
             { name: "CLIENT", color: 0x00f3ff, stage5Target: "ALIS" },
@@ -348,26 +364,32 @@
 
         let playerMesh, playerFlaskMesh;
         let keys = { w: false, a: false, s: false, d: false };
-        let playerPos = new THREE.Vector3(-36, 0, 8);
+        let playerPos = new THREE.Vector3(STAGE_X[0], 0, 8);
         let isPouring = false;
+
+        let activeGemTimelines = [];
 
         let stage2Scientists = [];
         let stage2VatFluid, stage2Scanners = [];
         let stage3HelixGroup, stage3Helix1, stage3Helix2, stage3ParticleSystem, stage3ParticleGeo;
         let stage3CoreOrb, stage3FloatingLabels = [];
-        let stage4Pods = [], stage4Doctors = [], stage4ConduitParticles = [];
+        let stage4Pods = [], stage4Doctors = [];
         let stage5Crystals = {};
 
         // Section 1 Animations
         let alchemistArm, alchemistVessel, alchemistStream;
-        let potionStirrer, pendulumRod, deskLanternLight;
+        let potionStirrer, pendulumRod;
         let legacyBubbles = [], legacySteamParticles = [];
 
         // Section 3 Animations
         let liveScientists = [], liveBubbles = [];
-        let holographicMolecule, roboticArm, roboticJoint, roboticHead, laserGridMesh;
+        let holographicMolecule, roboticArm, roboticJoint, roboticHead;
         let centrifuges = [], ceilingConduitFlow = [];
         let liveMiniCrystalsGroup;
+
+        // Animated instruments & pipeline beads
+        let dqAnimatedInstruments = [];
+        let dqPipelineBeads = [];
 
         let alisYield = 0, crmYield = 0, claraYield = 0, respondersYield = 0;
 
@@ -395,7 +417,7 @@
         }
 
         function buildFloorGrid() {
-            const floorGeo = new THREE.PlaneGeometry(320, 80);
+            const floorGeo = new THREE.PlaneGeometry(320, 90);
             const floorMat = new THREE.MeshStandardMaterial({ 
                 color: 0x050b14, 
                 roughness: 0.3, 
@@ -407,7 +429,7 @@
             floor.receiveShadow = true;
             scene.add(floor);
 
-            const gridHelper = new THREE.GridHelper(320, 80, 0x0284c7, 0x1e293b);
+            const gridHelper = new THREE.GridHelper(320, 90, 0x0284c7, 0x1e293b);
             gridHelper.position.y = -2.9;
             scene.add(gridHelper);
         }
@@ -468,7 +490,7 @@
             scene.fog = new THREE.FogExp2(0x010409, 0.005);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 35, 120);
+            camera.position.set(0, 38, 135);
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -507,11 +529,15 @@
             buildPlayerCharacter();
 
             buildSection1LegacySystem();
+            buildDQTeamUnit(DQ_X.team1, true);
             buildSection2MigrationFactory();
+            buildDQTeamUnit(DQ_X.team2, false);
             buildSection3LiveTargetSystem();
 
             create3DSectionHeaderLabel(SECTION_X.legacy, "1. LEGACY SYSTEM", 0xf59e0b);
+            create3DSectionHeaderLabel(DQ_X.team1, "DQ TEAM 1", 0x38bdf8);
             create3DSectionHeaderLabel(SECTION_X.factory, "2. MIGRATION FACTORY", 0x38bdf8);
+            create3DSectionHeaderLabel(DQ_X.team2, "DQ TEAM 2", 0x38bdf8);
             create3DSectionHeaderLabel(SECTION_X.live, "3. LIVE / TARGET SYSTEM", 0x10b981);
 
             window.addEventListener('keydown', (e) => {
@@ -520,6 +546,10 @@
                 if (e.key.toLowerCase() === 's') keys.s = true;
                 if (e.key.toLowerCase() === 'd') keys.d = true;
                 if (e.key.toLowerCase() === 'e') handleInteractKey();
+                
+                if (e.code === 'Space') {
+                    togglePauseState();
+                }
             });
 
             window.addEventListener('keyup', (e) => {
@@ -530,6 +560,18 @@
             });
 
             window.addEventListener('resize', onWindowResize);
+        }
+
+        function togglePauseState() {
+            isPaused = !isPaused;
+            const badge = document.getElementById('pause-symbol-badge');
+            if (isPaused) {
+                badge.classList.remove('hidden');
+                activeGemTimelines.forEach(tl => tl.pause());
+            } else {
+                badge.classList.add('hidden');
+                activeGemTimelines.forEach(tl => tl.resume());
+            }
         }
 
         function create3DSectionHeaderLabel(xPos, text, colorHex) {
@@ -582,6 +624,110 @@
             return sprite;
         }
 
+        function buildDQTeamUnit(xPos, isLeftUnit) {
+            const group = new THREE.Group();
+            group.position.set(xPos, 0, 0);
+
+            const wallSubgroup = new THREE.Group();
+            wallSubgroup.rotation.y = isLeftUnit ? Math.PI / 2 : -Math.PI / 2;
+
+            const wallFrameMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.9, roughness: 0.2 });
+            const frameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.8, 14, 0.8), wallFrameMat);
+            frameLeft.position.set(-5.5, 4, 0);
+            wallSubgroup.add(frameLeft);
+
+            const frameRight = new THREE.Mesh(new THREE.BoxGeometry(0.8, 14, 0.8), wallFrameMat);
+            frameRight.position.set(5.5, 4, 0);
+            wallSubgroup.add(frameRight);
+
+            const frameTop = new THREE.Mesh(new THREE.BoxGeometry(11.8, 0.8, 0.8), wallFrameMat);
+            frameTop.position.set(0, 11, 0);
+            wallSubgroup.add(frameTop);
+
+            const laserGlassMat = new THREE.MeshStandardMaterial({
+                color: 0x00f3ff,
+                transparent: true,
+                opacity: 0.35,
+                roughness: 0.1,
+                side: THREE.DoubleSide
+            });
+            const laserGlass = new THREE.Mesh(new THREE.PlaneGeometry(10.2, 14.0), laserGlassMat);
+            laserGlass.position.set(0, 4, 0);
+            wallSubgroup.add(laserGlass);
+
+            const pipelineMat = new THREE.MeshStandardMaterial({ color: 0xf97316, metalness: 0.7, roughness: 0.3 });
+            const arrowMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xeab308, emissiveIntensity: 0.8 });
+
+            for (let row = 0; row < 5; row++) {
+                const yLevel = 9.5 - row * 2.4;
+                const pipeBar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 9.5, 12), pipelineMat);
+                pipeBar.rotation.z = Math.PI / 2;
+                pipeBar.position.set(0, yLevel, 0.1);
+                wallSubgroup.add(pipeBar);
+
+                for (let a = 0; a < 4; a++) {
+                    const bead = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), arrowMat);
+                    bead.position.set(-3.5 + a * 2.4, yLevel, 0.22);
+                    bead.userData = { initialX: -3.5 + a * 2.4, row: row };
+                    dqPipelineBeads.push(bead);
+                    wallSubgroup.add(bead);
+                }
+            }
+            group.add(wallSubgroup);
+
+            const tableGroup = new THREE.Group();
+            tableGroup.position.set(0, -0.5, 5.0);
+
+            const tableTop = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.4, 3.8), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.4, metalness: 0.6 }));
+            tableTop.castShadow = true;
+            tableGroup.add(tableTop);
+
+            for (let legIdx = 0; legIdx < 4; legIdx++) {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.2, 8), wallFrameMat);
+                leg.position.set((legIdx % 2 === 0 ? -2.8 : 2.8), -1.2, (legIdx < 2 ? -1.5 : 1.5));
+                tableGroup.add(leg);
+            }
+
+            const mainBeaker = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.6, 1.2, 16), new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 }));
+            mainBeaker.position.set(-1.8, 0.8, 0);
+            tableGroup.add(mainBeaker);
+
+            const beakerFluid = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.8, 16), new THREE.MeshStandardMaterial({ color: 0xa855f7, roughness: 0.3 }));
+            beakerFluid.position.set(-1.8, 0.6, 0);
+            tableGroup.add(beakerFluid);
+            dqAnimatedInstruments.push({ mesh: beakerFluid, type: 'pulse' });
+
+            const miniCentrifuge = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.7, 0.6, 16), new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8 }));
+            miniCentrifuge.position.set(0.2, 0.5, -0.5);
+            tableGroup.add(miniCentrifuge);
+
+            const rotor = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.06, 8, 16), new THREE.MeshStandardMaterial({ color: 0x00f3ff }));
+            rotor.rotation.x = Math.PI / 2;
+            rotor.position.set(0.2, 0.82, -0.5);
+            tableGroup.add(rotor);
+            dqAnimatedInstruments.push({ mesh: rotor, type: 'spin' });
+
+            group.add(tableGroup);
+
+            const operator1 = createDoctorCharacterModel(0x0284c7, 0x38bdf8);
+            operator1.position.set(-2.0, -0.5, 7.5);
+            operator1.rotation.y = 0;
+            const badge1 = createCharacterNameBadge("DQ OPERATOR 1", 0x38bdf8);
+            badge1.position.set(0, 3.4, 0);
+            operator1.add(badge1);
+            group.add(operator1);
+
+            const operator2 = createDoctorCharacterModel(0x0f766e, 0x34d399);
+            operator2.position.set(2.0, -0.5, 7.5);
+            operator2.rotation.y = 0;
+            const badge2 = createCharacterNameBadge("DQ OPERATOR 2", 0x34d399);
+            badge2.position.set(0, 3.4, 0);
+            operator2.add(badge2);
+            group.add(operator2);
+
+            scene.add(group);
+        }
+
         // --- SECTION 1: LEGACY SYSTEM LAB ---
         function buildSection1LegacySystem() {
             const group = new THREE.Group();
@@ -601,7 +747,6 @@
             backWall.receiveShadow = true;
             group.add(backWall);
 
-            // CORRECTION 1: Repositioned & Resized Aegon / Legacy Architecture Wall Board precisely on the top-left wall above left window
             const legacyArtSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="200">
                 <rect width="600" height="200" fill="#1e1b4b" stroke="#ef4444" stroke-width="8" rx="16"/>
                 <path d="M 40 100 Q 150 20, 300 100 T 560 100" fill="none" stroke="#f59e0b" stroke-width="8"/>
@@ -664,7 +809,6 @@
 
             group.add(clockGroup);
 
-            // Cabinet with PEGA Top Setup
             const cabinetGroup = new THREE.Group();
             cabinetGroup.position.set(10, 2.5, -1);
 
@@ -700,7 +844,6 @@
                 cabinetGroup.add(bottle);
             }
 
-            // PEGA Setup on Top of Cupboard
             const pegaSetupGroup = new THREE.Group();
             pegaSetupGroup.position.set(0, 6.2, 0);
 
@@ -725,7 +868,6 @@
             cabinetGroup.add(pegaSetupGroup);
             group.add(cabinetGroup);
 
-            // Main Alchemy Desk
             const deskGroup = new THREE.Group();
             deskGroup.position.set(-2, -0.5, 0);
 
@@ -754,7 +896,6 @@
                 deskGroup.add(goldTip);
             }
 
-            // SCMS Funnel Setup (Far Left Desk)
             const scmsGroup = new THREE.Group();
             scmsGroup.position.set(-5.5, 1.2, 0.8);
 
@@ -771,7 +912,6 @@
 
             deskGroup.add(scmsGroup);
 
-            // IBP Chemical Flask Setup (Right Desk)
             const ibpGroup = new THREE.Group();
             ibpGroup.position.set(4.5, 1.2, 0.8);
 
@@ -1136,7 +1276,6 @@
                 group.add(chair);
             });
 
-            // CORRECTION 2: Updated titles to full clean names without DM, BA, DA short forms
             const dmCharacter = createSeatedMaleScientist();
             dmCharacter.position.set(-2.8, -0.85, 2.2);
             dmCharacter.rotation.y = Math.PI / 6;
@@ -1359,7 +1498,6 @@
             const group = new THREE.Group();
             group.position.set(STAGE_X[2], 0, 0);
 
-            // Outer Structure & Base
             const floorMat = new THREE.MeshStandardMaterial({ color: 0x0a101d, metalness: 0.85, roughness: 0.2 });
             const floor = new THREE.Mesh(new THREE.CylinderGeometry(7.5, 7.5, 0.3, 32), floorMat);
             floor.position.y = -2.85;
@@ -1398,7 +1536,6 @@
                 group.add(ring);
             }
 
-            // Core Glass Chamber
             const glassMat = new THREE.MeshPhysicalMaterial({
                 color: 0x00e5ff,
                 roughness: 0.05,
@@ -1411,7 +1548,6 @@
             glassChamber.position.y = 3.3;
             group.add(glassChamber);
 
-            // Swirling Helical Coil Rings
             stage3HelixGroup = new THREE.Group();
             stage3HelixGroup.position.y = 3.3;
 
@@ -1441,7 +1577,6 @@
             stage3HelixGroup.add(stage3Helix2);
             group.add(stage3HelixGroup);
 
-            // Swirling Glowing Energy Orb Core Inside Reactor
             stage3CoreOrb = new THREE.Mesh(
                 new THREE.IcosahedronGeometry(1.2, 2),
                 new THREE.MeshStandardMaterial({
@@ -1454,7 +1589,6 @@
             stage3CoreOrb.position.set(0, 3.3, 0);
             group.add(stage3CoreOrb);
 
-            // Particle Field
             const particleCount = 400;
             stage3ParticleGeo = new THREE.BufferGeometry();
             const particlePositions = new Float32Array(particleCount * 3);
@@ -1479,7 +1613,6 @@
             stage3ParticleSystem = new THREE.Points(stage3ParticleGeo, particleMat);
             group.add(stage3ParticleSystem);
 
-            // CORRECTION 3: Properly scaled and animated Floating Labels inside Reactor Core
             stage3FloatingLabels = [];
             const floatLabelNames = ["SPRINTPLANNING", "2 WEEKS SPRINT"];
             floatLabelNames.forEach((name, idx) => {
@@ -1491,7 +1624,6 @@
                 group.add(lbl);
             });
 
-            // SPRINT REFINEMENT Workstation
             const leftWorkstationGroup = new THREE.Group();
             leftWorkstationGroup.position.set(-7.5, -0.8, 0);
 
@@ -1526,7 +1658,6 @@
 
             group.add(leftWorkstationGroup);
 
-            // RETROSPECTIVE & SYSTEM DEMO Terminal Workstation
             const rightWorkstationGroup = new THREE.Group();
             rightWorkstationGroup.position.set(7.5, -0.8, 0);
 
@@ -1662,12 +1793,48 @@
                 }
             }
 
+            const dvsBadge = createCharacterNameBadge("DVS (Test Automation)", 0x10b981);
+            dvsBadge.position.set(-2.5, 4.2, -7.2);
+            dvsBadge.scale.set(7.5, 1.5, 1);
+            group.add(dvsBadge);
+
+            const ctrlTableGroup = new THREE.Group();
+            ctrlTableGroup.position.set(-6.5, -0.6, -1.5);
+
+            const redDesk = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.4, 2.8), new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.4 }));
+            redDesk.castShadow = true;
+            ctrlTableGroup.add(redDesk);
+
+            for (let lIdx = 0; lIdx < 4; lIdx++) {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 2.0, 8), new THREE.MeshStandardMaterial({ color: 0x334155 }));
+                leg.position.set((lIdx % 2 === 0 ? -1.9 : 1.9), -1.1, (lIdx < 2 ? -1.0 : 1.0));
+                ctrlTableGroup.add(leg);
+            }
+
+            for (let dish = 0; dish < 3; dish++) {
+                const blueDish = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.15, 12), new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3 }));
+                blueDish.position.set(-1.2 + dish * 1.2, 0.28, 0);
+                ctrlTableGroup.add(blueDish);
+            }
+
+            group.add(ctrlTableGroup);
+
+            const opA = createDoctorCharacterModel(0x0284c7, 0x10b981);
+            opA.position.set(-7.5, -0.5, 1.2);
+            opA.rotation.y = Math.PI / 4;
+            group.add(opA);
+
+            const opB = createDoctorCharacterModel(0x10b981, 0x38bdf8);
+            opB.position.set(-5.2, -0.5, 1.2);
+            opB.rotation.y = -Math.PI / 4;
+            group.add(opB);
+
             const zPositions = [-6, -3, 0, 3, 6];
             const doctorNamesStage4 = ["T1 - TOM", "T2 - JERRY", "T3 - MICKEY", "T4 - DONALD", "T5 - SQUAD"];
 
             for (let i = 0; i < 5; i++) {
                 const podGroup = new THREE.Group();
-                podGroup.position.set(0, 0, zPositions[i]);
+                podGroup.position.set(1.5, 0, zPositions[i]);
 
                 const baseRing = new THREE.Mesh(
                     new THREE.CylinderGeometry(1.4, 1.6, 0.6, 16),
@@ -1695,7 +1862,7 @@
                 group.add(podGroup);
 
                 const docGroup = createDoctorCharacterModel(0x0284c7, 0x00f3ff);
-                docGroup.position.set(2.8, -0.5, zPositions[i]);
+                docGroup.position.set(4.2, -0.5, zPositions[i]);
                 docGroup.rotation.y = -Math.PI / 2;
 
                 const nameBadge = createCharacterNameBadge(doctorNamesStage4[i], 0x00f3ff);
@@ -1806,7 +1973,6 @@
             backWall.receiveShadow = true;
             group.add(backWall);
 
-            // CORRECTION 4: Laserfiche label shifted down & reduced in size, placed right above central analytical board
             const laserficheHeader = create3DCrystalLabel("Laserfiche", 0x38bdf8);
             laserficheHeader.position.set(0, 9.2, -4.2);
             laserficheHeader.scale.set(6.0, 1.8, 1);
@@ -1914,6 +2080,7 @@
             commandHubGroup.add(holographicMolecule);
             group.add(commandHubGroup);
 
+            // Main White Lab Bench (Clean - Grid overlay removed)
             const mainBench = new THREE.Mesh(
                 new THREE.BoxGeometry(26, 2.2, 5.0),
                 new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.1 })
@@ -1923,39 +2090,54 @@
             mainBench.receiveShadow = true;
             group.add(mainBench);
 
-            laserGridMesh = new THREE.GridHelper(24, 20, 0x00f3ff, 0x0284c7);
-            laserGridMesh.position.set(0, -0.68, 0);
-            group.add(laserGridMesh);
-
-            // 3 Mini Linked Crystals (ALIS, CLARA, CRM)
+            // CORRECTION: 3 ENLARGED CRYSTALS SHIFTED AN ADDITIONAL 150% FORWARD (+Z DIRECTION TO z = 5.2)
             liveMiniCrystalsGroup = new THREE.Group();
-            liveMiniCrystalsGroup.position.set(0, -2.2, 3.8);
+            liveMiniCrystalsGroup.position.set(0, -0.8, 5.2);
 
+            // 1. ALIS Crystal (Left)
             const miniAlis = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.1, 0.4, 1.0, 6),
+                new THREE.CylinderGeometry(0.25, 0.9, 2.2, 6),
                 new THREE.MeshStandardMaterial({ color: 0x00f3ff, roughness: 0.2, metalness: 0.4 })
             );
-            miniAlis.position.set(-2.5, 0, 0);
+            miniAlis.position.set(-5.5, 0.8, 0);
             liveMiniCrystalsGroup.add(miniAlis);
 
+            // ALIS label adjusted lower
+            const alisBottomBadge = create3DCrystalLabel("ALIS", 0x00f3ff);
+            alisBottomBadge.position.set(-5.5, -1.1, 0);
+            alisBottomBadge.scale.set(3.5, 1.0, 1);
+            liveMiniCrystalsGroup.add(alisBottomBadge);
+
+            // 2. CRM Crystal (Center)
             const miniCrm = new THREE.Mesh(
-                new THREE.OctahedronGeometry(0.4, 0),
+                new THREE.OctahedronGeometry(0.95, 0),
                 new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.4 })
             );
-            miniCrm.position.set(0, 0, 0);
+            miniCrm.position.set(0, 0.8, 0);
             liveMiniCrystalsGroup.add(miniCrm);
 
+            const crmBottomBadge = create3DCrystalLabel("CRM", 0xf59e0b);
+            crmBottomBadge.position.set(0, -0.6, 0);
+            crmBottomBadge.scale.set(3.5, 1.0, 1);
+            liveMiniCrystalsGroup.add(crmBottomBadge);
+
+            // 3. CLARA Crystal (Right)
             const miniClara = new THREE.Mesh(
-                new THREE.IcosahedronGeometry(0.4, 0),
+                new THREE.IcosahedronGeometry(0.9, 0),
                 new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.2, metalness: 0.4 })
             );
-            miniClara.position.set(2.5, 0, 0);
+            miniClara.position.set(5.5, 0.8, 0);
             liveMiniCrystalsGroup.add(miniClara);
 
+            const claraBottomBadge = create3DCrystalLabel("CLARA", 0xe11d48);
+            claraBottomBadge.position.set(5.5, -0.6, 0);
+            claraBottomBadge.scale.set(3.5, 1.0, 1);
+            liveMiniCrystalsGroup.add(claraBottomBadge);
+
             const laserLineGeo = new THREE.BufferGeometry().setFromPoints([
-                new THREE.Vector3(-2.5, 0, 0),
-                new THREE.Vector3(0, 0, 0),
-                new THREE.Vector3(2.5, 0, 0)
+                new THREE.Vector3(-5.5, 0.8, 0),
+                new THREE.Vector3(0, 0.8, 0),
+                new THREE.Vector3(5.5, 0.8, 0)
             ]);
             const laserLineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
             const laserLine = new THREE.Line(laserLineGeo, laserLineMat);
@@ -2128,6 +2310,9 @@
                 }
             });
 
+            if (isPaused) tline.pause();
+            activeGemTimelines.push(tline);
+
             tline.to(playerFlaskMesh.rotation, { z: -Math.PI / 2, duration: 0.6 });
 
             DOMAINS.forEach((domain, idx) => {
@@ -2168,6 +2353,9 @@
                     sounds.playChime();
                 }
             });
+
+            if (isPaused) tline.pause();
+            activeGemTimelines.push(tline);
 
             tline.to(gem.position, { x: STAGE_X[1], y: 0, duration: 2.0, ease: "power1.inOut" });
 
@@ -2217,7 +2405,7 @@
         }
 
         function updatePlayerMovement() {
-            if (!isGameRunning || isPouring) return;
+            if (!isGameRunning || isPouring || isPaused) return;
 
             const speed = 0.28;
             let moveDir = new THREE.Vector3();
@@ -2255,6 +2443,12 @@
             gsap.to(controls.target, { x: targetX, y: 0, z: 0, duration: 1.5, ease: "power2.inOut" });
         }
 
+        function focusDQTeam(teamNumber) {
+            const targetX = teamNumber === 1 ? DQ_X.team1 : DQ_X.team2;
+            gsap.to(camera.position, { x: targetX, y: 14.5, z: 32.5, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(controls.target, { x: targetX, y: 2, z: 0, duration: 1.5, ease: "power2.inOut" });
+        }
+
         function focusStage(stageIndex) {
             const targetX = STAGE_X[stageIndex];
             gsap.to(camera.position, { x: targetX, y: 11, z: 22, duration: 1.2, ease: "power2.inOut" });
@@ -2267,126 +2461,142 @@
         }
 
         function focusGlobalView2() {
-            gsap.to(camera.position, { x: 0, y: 55, z: 165, duration: 2.0, ease: "power2.inOut" });
+            gsap.to(camera.position, { x: 0, y: 55, z: 160, duration: 2.0, ease: "power2.inOut" });
             gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 2.0, ease: "power2.inOut" });
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            updatePlayerMovement();
+            if (!isPaused) {
+                updatePlayerMovement();
 
-            const time = Date.now();
+                const time = Date.now();
 
-            // Section 1 Animations
-            if (alchemistArm) {
-                alchemistArm.rotation.z = Math.sin(time * 0.003) * 0.2;
-                alchemistVessel.rotation.z = Math.cos(time * 0.003) * 0.15;
-            }
-            if (potionStirrer) {
-                potionStirrer.rotation.y += 0.05;
-            }
-            if (pendulumRod) {
-                pendulumRod.rotation.z = Math.sin(time * 0.002) * 0.25;
-            }
+                // Section 1 Animations
+                if (alchemistArm) {
+                    alchemistArm.rotation.z = Math.sin(time * 0.003) * 0.2;
+                    alchemistVessel.rotation.z = Math.cos(time * 0.003) * 0.15;
+                }
+                if (potionStirrer) {
+                    potionStirrer.rotation.y += 0.05;
+                }
+                if (pendulumRod) {
+                    pendulumRod.rotation.z = Math.sin(time * 0.002) * 0.25;
+                }
 
-            legacyBubbles.forEach(b => {
-                b.position.y += 0.015;
-                if (b.position.y > 2.6) b.position.y = 1.0;
-            });
-            legacySteamParticles.forEach(s => {
-                s.position.y += 0.01;
-                s.position.x += Math.sin(time * 0.005 + s.position.y) * 0.005;
-                if (s.position.y > 3.8) s.position.y = 2.6;
-            });
+                legacyBubbles.forEach(b => {
+                    b.position.y += 0.015;
+                    if (b.position.y > 2.6) b.position.y = 1.0;
+                });
+                legacySteamParticles.forEach(s => {
+                    s.position.y += 0.01;
+                    s.position.x += Math.sin(time * 0.005 + s.position.y) * 0.005;
+                    if (s.position.y > 3.8) s.position.y = 2.6;
+                });
 
-            // Stage 2 Seated Working Animations
-            stage2Scientists.forEach((doc) => {
-                if (!doc.userData) return;
-                
-                if (doc.userData.role === 'DM') {
-                    doc.userData.rightArm.rotation.x = -0.9 + Math.sin(time * 0.003) * 0.2;
-                    doc.userData.rightArm.rotation.z = Math.cos(time * 0.002) * 0.1;
-                    doc.userData.head.rotation.y = Math.sin(time * 0.002) * 0.18;
-                    doc.userData.torso.rotation.x = 0.1 + Math.sin(time * 0.003) * 0.03;
-                } else if (doc.userData.role === 'DA') {
-                    doc.userData.rightArm.rotation.x = -1.0 + Math.cos(time * 0.006) * 0.2;
-                    doc.userData.leftArm.rotation.x = -0.8 + Math.sin(time * 0.003) * 0.1;
-                    if (doc.userData.rBoard) {
-                        doc.userData.rBoard.rotation.z = Math.sin(time * 0.003) * 0.08;
+                // DQ Team Instruments & Pipeline Beads
+                dqAnimatedInstruments.forEach(item => {
+                    if (item.type === 'spin') {
+                        item.mesh.rotation.z += 0.1;
+                    } else if (item.type === 'pulse') {
+                        item.mesh.scale.y = 1.0 + Math.sin(time * 0.005) * 0.1;
                     }
-                    doc.userData.head.rotation.x = Math.sin(time * 0.002) * 0.12;
-                } else if (doc.userData.role === 'BA') {
-                    doc.userData.leftArm.rotation.x = -1.15 + Math.sin(time * 0.012) * 0.12;
-                    doc.userData.rightArm.rotation.x = -1.15 + Math.cos(time * 0.012) * 0.12;
-                    doc.userData.head.rotation.y = Math.sin(time * 0.003) * 0.08;
-                    doc.userData.head.rotation.x = 0.08 + Math.cos(time * 0.002) * 0.04;
-                }
-            });
+                });
 
-            // Stage 3 Energy Reactor Core Animations
-            if (stage3HelixGroup) {
-                stage3HelixGroup.rotation.y += 0.025;
-            }
-            if (stage3CoreOrb) {
-                stage3CoreOrb.rotation.y += 0.03;
-                stage3CoreOrb.rotation.x += 0.015;
-            }
-            stage3FloatingLabels.forEach(lbl => {
-                lbl.position.y = lbl.userData.initialY + Math.sin(time * 0.003 + lbl.userData.offset) * 0.45;
-            });
+                dqPipelineBeads.forEach(bead => {
+                    bead.position.x += 0.08;
+                    if (bead.position.x > 3.8) bead.position.x = -3.8;
+                });
 
-            if (stage3ParticleGeo) {
-                const positions = stage3ParticleGeo.attributes.position.array;
-                for (let p = 0; p < 400; p++) {
-                    positions[p * 3 + 1] += 0.05;
-                    if (positions[p * 3 + 1] > 7.8) {
-                        positions[p * 3 + 1] = -1.2;
+                // Stage 2 Seated Working Animations
+                stage2Scientists.forEach((doc) => {
+                    if (!doc.userData) return;
+                    
+                    if (doc.userData.role === 'DM') {
+                        doc.userData.rightArm.rotation.x = -0.9 + Math.sin(time * 0.003) * 0.2;
+                        doc.userData.rightArm.rotation.z = Math.cos(time * 0.002) * 0.1;
+                        doc.userData.head.rotation.y = Math.sin(time * 0.002) * 0.18;
+                        doc.userData.torso.rotation.x = 0.1 + Math.sin(time * 0.003) * 0.03;
+                    } else if (doc.userData.role === 'DA') {
+                        doc.userData.rightArm.rotation.x = -1.0 + Math.cos(time * 0.006) * 0.2;
+                        doc.userData.leftArm.rotation.x = -0.8 + Math.sin(time * 0.003) * 0.1;
+                        if (doc.userData.rBoard) {
+                            doc.userData.rBoard.rotation.z = Math.sin(time * 0.003) * 0.08;
+                        }
+                        doc.userData.head.rotation.x = Math.sin(time * 0.002) * 0.12;
+                    } else if (doc.userData.role === 'BA') {
+                        doc.userData.leftArm.rotation.x = -1.15 + Math.sin(time * 0.012) * 0.12;
+                        doc.userData.rightArm.rotation.x = -1.15 + Math.cos(time * 0.012) * 0.12;
+                        doc.userData.head.rotation.y = Math.sin(time * 0.003) * 0.08;
+                        doc.userData.head.rotation.x = 0.08 + Math.cos(time * 0.002) * 0.04;
                     }
+                });
+
+                // Stage 3 Energy Reactor Core Animations
+                if (stage3HelixGroup) {
+                    stage3HelixGroup.rotation.y += 0.025;
                 }
-                stage3ParticleGeo.attributes.position.needsUpdate = true;
-            }
-
-            // Section 3 Animations
-            if (holographicMolecule) {
-                holographicMolecule.rotation.y += 0.02;
-                holographicMolecule.rotation.x += 0.01;
-            }
-            if (roboticArm) {
-                roboticJoint.rotation.y = Math.sin(time * 0.0015) * 0.5;
-                roboticHead.rotation.x = Math.cos(time * 0.003) * 0.3;
-            }
-            if (liveMiniCrystalsGroup) {
-                liveMiniCrystalsGroup.rotation.y = Math.sin(time * 0.002) * 0.2;
-            }
-
-            centrifuges.forEach(c => {
-                c.rotation.z += 0.15;
-            });
-
-            ceilingConduitFlow.forEach((c, i) => {
-                c.position.x += 0.2;
-                if (c.position.x > 15) c.position.x = -15;
-            });
-
-            liveBubbles.forEach(b => {
-                b.position.y += 0.015;
-                if (b.position.y > 0.4) b.position.y = -0.3;
-            });
-
-            stage4Doctors.concat(liveScientists).forEach((doc, i) => {
-                if (doc.userData && doc.userData.head) {
-                    doc.userData.head.rotation.y = Math.sin(time * 0.002 + i) * 0.15;
+                if (stage3CoreOrb) {
+                    stage3CoreOrb.rotation.y += 0.03;
+                    stage3CoreOrb.rotation.x += 0.015;
                 }
-            });
+                stage3FloatingLabels.forEach(lbl => {
+                    lbl.position.y = lbl.userData.initialY + Math.sin(time * 0.003 + lbl.userData.offset) * 0.45;
+                });
 
-            stage2Scanners.forEach((sc, i) => {
-                sc.position.y += Math.sin(time * 0.004 + i) * 0.005;
-            });
+                if (stage3ParticleGeo) {
+                    const positions = stage3ParticleGeo.attributes.position.array;
+                    for (let p = 0; p < 400; p++) {
+                        positions[p * 3 + 1] += 0.05;
+                        if (positions[p * 3 + 1] > 7.8) {
+                            positions[p * 3 + 1] = -1.2;
+                        }
+                    }
+                    stage3ParticleGeo.attributes.position.needsUpdate = true;
+                }
 
-            stage4Pods.forEach((pod, i) => {
-                pod.innerRing.position.y = Math.sin(time * 0.004 + i) * 1.5;
-            });
+                // Section 3 Animations
+                if (holographicMolecule) {
+                    holographicMolecule.rotation.y += 0.02;
+                    holographicMolecule.rotation.x += 0.01;
+                }
+                if (roboticArm) {
+                    roboticJoint.rotation.y = Math.sin(time * 0.0015) * 0.5;
+                    roboticHead.rotation.x = Math.cos(time * 0.003) * 0.3;
+                }
+                if (liveMiniCrystalsGroup) {
+                    liveMiniCrystalsGroup.rotation.y = Math.sin(time * 0.002) * 0.2;
+                }
+
+                centrifuges.forEach(c => {
+                    c.rotation.z += 0.15;
+                });
+
+                ceilingConduitFlow.forEach((c) => {
+                    c.position.x += 0.2;
+                    if (c.position.x > 15) c.position.x = -15;
+                });
+
+                liveBubbles.forEach(b => {
+                    b.position.y += 0.015;
+                    if (b.position.y > 0.4) b.position.y = -0.3;
+                });
+
+                stage4Doctors.concat(liveScientists).forEach((doc, i) => {
+                    if (doc.userData && doc.userData.head) {
+                        doc.userData.head.rotation.y = Math.sin(time * 0.002 + i) * 0.15;
+                    }
+                });
+
+                stage2Scanners.forEach((sc, i) => {
+                    sc.position.y += Math.sin(time * 0.004 + i) * 0.005;
+                });
+
+                stage4Pods.forEach((pod, i) => {
+                    pod.innerRing.position.y = Math.sin(time * 0.004 + i) * 1.5;
+                });
+            }
 
             controls.update();
             composer.render();
