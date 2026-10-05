@@ -40,6 +40,38 @@
             position: relative;
         }
 
+        /* CORRECTION 2: Clear, visible lab background image (Minimal blur & enhanced visibility) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
+            /* Gentle 2px blur & 0.65 brightness to make the lab structure clearly visible */
+            filter: blur(2px) brightness(0.65) contrast(1.05);
+            transform: scale(1.02);
+        }
+
+        /* Gentle subtle vignette overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at center, rgba(1, 4, 9, 0.1) 0%, rgba(1, 4, 9, 0.5) 100%);
+            pointer-events: none;
+        }
+
         .font-orbitron {
             font-family: 'Orbitron', sans-serif;
         }
@@ -50,13 +82,6 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(56, 189, 248, 0.3);
             box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.85);
-        }
-
-        .grid-bg {
-            background-size: 40px 40px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
 
         @keyframes key-bounce {
@@ -122,7 +147,7 @@
         }
     </style>
 </head>
-<body class="relative w-screen h-screen overflow-hidden grid-bg">
+<body class="relative w-screen h-screen overflow-hidden">
 
     <!-- 3D WebGL Canvas Container -->
     <div id="canvas-container" class="absolute inset-0 w-full h-full z-0"></div>
@@ -215,7 +240,7 @@
                 </button>
 
                 <button onclick="focusDQTeam(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
-                    <i class="fa-solid fa-shield-halved"></i> DQ Team 1
+                    <i class="fa-solid fa-shield-halved"></i> DQ Gateway
                 </button>
 
                 <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.125rem;"></div>
@@ -229,7 +254,7 @@
                 <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.125rem;"></div>
 
                 <button onclick="focusDQTeam(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
-                    <i class="fa-solid fa-shield-halved"></i> DQ Team 2
+                    <i class="fa-solid fa-shield-halved"></i> DQ Assurance
                 </button>
 
                 <button onclick="focusSection('live')" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1.5" style="font-size: 0.75rem; color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">
@@ -279,15 +304,15 @@
                 </div>
                 <div>
                     <h2 class="font-orbitron font-extrabold text-2xl" style="color: #67e8f9;">AMPS DATA REACTOR ARCHITECTURE</h2>
-                    <p style="font-size: 0.75rem; color: #94a3b8;">Legacy System &rarr; DQ Intake 1 &rarr; Migration Core &rarr; DQ Intake 2 &rarr; Live System</p>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Legacy System &rarr; DQ Gateway &rarr; Migration Core &rarr; DQ Assurance &rarr; Live System</p>
                 </div>
             </div>
 
             <p style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.625; margin-bottom: 1.5rem;">
-                Explore 3 macro-sections with refined spacing and forward-placed output crystals:
-                <br>&bull; <strong>Legacy &amp; DQ Team 1 Intake</strong> &mdash; SCMS, IBP, PEGA setup &amp; rotated Laser Wall with animated pipeline data beads.
-                <br>&bull; <strong>Migration Factory</strong> &mdash; 5-stage pipeline with Stage 4 shifted closer to Stage 5, including DVS (Test Automation) Control Station.
-                <br>&bull; <strong>DQ Team 2 &amp; Live Target System</strong> &mdash; 100%+ enlarged ALIS, CRM, CLARA crystals shifted an additional 150% forward (+Z direction) on the bench.
+                Explore 3 macro-sections connected by light-blue laser lines &amp; moving data beads:
+                <br>&bull; <strong>Legacy &amp; Pre-Transformation DQ Gateway</strong> &mdash; SCMS, IBP, PEGA setup, single DQ Analyst, &amp; animated connecting line.
+                <br>&bull; <strong>Migration Factory</strong> &mdash; 5-stage pipeline with DVS (Test Automation) Control Station at Stage 4.
+                <br>&bull; <strong>Post-Transformation DQ Assurance &amp; Live Target System</strong> &mdash; Single DQ Analyst, connecting line, &amp; enlarged ALIS, CRM, CLARA output crystals.
                 <br>&bull; <strong>Controls</strong> &mdash; Press <strong>`SPACE`</strong> anytime to toggle animation pause/resume!
             </p>
 
@@ -387,9 +412,10 @@
         let centrifuges = [], ceilingConduitFlow = [];
         let liveMiniCrystalsGroup;
 
-        // Animated instruments & pipeline beads
+        // Animated instruments, pipeline beads & connecting line beads
         let dqAnimatedInstruments = [];
         let dqPipelineBeads = [];
+        let connectingLineBeads = [];
 
         let alisYield = 0, crmYield = 0, claraYield = 0, respondersYield = 0;
 
@@ -416,22 +442,21 @@
             return texture;
         }
 
+        // CORRECTION 1: Removed bottom grid lines
         function buildFloorGrid() {
             const floorGeo = new THREE.PlaneGeometry(320, 90);
             const floorMat = new THREE.MeshStandardMaterial({ 
                 color: 0x050b14, 
                 roughness: 0.3, 
-                metalness: 0.5 
+                metalness: 0.5,
+                transparent: true,
+                opacity: 0.2
             });
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             floor.position.y = -3;
             floor.receiveShadow = true;
             scene.add(floor);
-
-            const gridHelper = new THREE.GridHelper(320, 90, 0x0284c7, 0x1e293b);
-            gridHelper.position.y = -2.9;
-            scene.add(gridHelper);
         }
 
         function buildStage1Funnel() {
@@ -483,16 +508,49 @@
             scene.add(playerMesh);
         }
 
+        function buildConnectingLineWithBeads(startX, endX, yLevel = 1.0) {
+            const group = new THREE.Group();
+            
+            const lineDistance = endX - startX;
+            const lineGeo = new THREE.CylinderGeometry(0.08, 0.08, lineDistance, 12);
+            const lineMat = new THREE.MeshStandardMaterial({
+                color: 0x38bdf8,
+                emissive: 0x0284c7,
+                emissiveIntensity: 0.6,
+                roughness: 0.2
+            });
+            const lineMesh = new THREE.Mesh(lineGeo, lineMat);
+            lineMesh.rotation.z = Math.PI / 2;
+            lineMesh.position.set(startX + lineDistance / 2, yLevel, 0);
+            group.add(lineMesh);
+
+            const beadMat = new THREE.MeshStandardMaterial({
+                color: 0x38bdf8,
+                emissive: 0x38bdf8,
+                emissiveIntensity: 1.2
+            });
+
+            for (let b = 0; b < 4; b++) {
+                const bead = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 12), beadMat);
+                bead.position.set(startX + (b / 4) * lineDistance, yLevel, 0);
+                bead.userData = { startX: startX, endX: endX, progress: b / 4, yLevel: yLevel };
+                connectingLineBeads.push(bead);
+                group.add(bead);
+            }
+
+            scene.add(group);
+        }
+
         function initThree() {
             const container = document.getElementById('canvas-container');
 
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x010409, 0.005);
+            scene.fog = new THREE.FogExp2(0x010409, 0.003);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 38, 135);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.shadowMap.enabled = true;
@@ -529,15 +587,21 @@
             buildPlayerCharacter();
 
             buildSection1LegacySystem();
+            
+            buildConnectingLineWithBeads(SECTION_X.legacy + 12.0, DQ_X.team1 - 6.0, 1.0);
+
             buildDQTeamUnit(DQ_X.team1, true);
             buildSection2MigrationFactory();
             buildDQTeamUnit(DQ_X.team2, false);
+
+            buildConnectingLineWithBeads(DQ_X.team2 + 6.0, SECTION_X.live - 12.0, 1.0);
+
             buildSection3LiveTargetSystem();
 
             create3DSectionHeaderLabel(SECTION_X.legacy, "1. LEGACY SYSTEM", 0xf59e0b);
-            create3DSectionHeaderLabel(DQ_X.team1, "DQ TEAM 1", 0x38bdf8);
+            create3DSectionHeaderLabel(DQ_X.team1, "Pre-Transformation Data Quality Gateway", 0x38bdf8);
             create3DSectionHeaderLabel(SECTION_X.factory, "2. MIGRATION FACTORY", 0x38bdf8);
-            create3DSectionHeaderLabel(DQ_X.team2, "DQ TEAM 2", 0x38bdf8);
+            create3DSectionHeaderLabel(DQ_X.team2, "Post-Transformation Data Quality Assurance", 0x38bdf8);
             create3DSectionHeaderLabel(SECTION_X.live, "3. LIVE / TARGET SYSTEM", 0x10b981);
 
             window.addEventListener('keydown', (e) => {
@@ -575,15 +639,15 @@
         }
 
         function create3DSectionHeaderLabel(xPos, text, colorHex) {
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="140">
-                <rect x="10" y="10" width="580" height="120" rx="24" fill="rgba(15,23,42,0.9)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="8"/>
-                <text x="300" y="78" font-family="Orbitron, sans-serif" font-weight="900" font-size="28" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${text}</text>
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="680" height="140">
+                <rect x="10" y="10" width="660" height="120" rx="24" fill="rgba(15,23,42,0.92)" stroke="#${colorHex.toString(16).padStart(6, '0')}" stroke-width="8"/>
+                <text x="340" y="78" font-family="Orbitron, sans-serif" font-weight="900" font-size="23" fill="#${colorHex.toString(16).padStart(6, '0')}" text-anchor="middle">${text}</text>
             </svg>`;
-            const texture = generateSVGTexture(svg, 600, 140);
+            const texture = generateSVGTexture(svg, 680, 140);
             const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
             const sprite = new THREE.Sprite(spriteMat);
             sprite.position.set(xPos, 16.0, 0);
-            sprite.scale.set(16, 3.8, 1);
+            sprite.scale.set(18, 3.8, 1);
             scene.add(sprite);
         }
 
@@ -709,21 +773,13 @@
 
             group.add(tableGroup);
 
-            const operator1 = createDoctorCharacterModel(0x0284c7, 0x38bdf8);
-            operator1.position.set(-2.0, -0.5, 7.5);
-            operator1.rotation.y = 0;
-            const badge1 = createCharacterNameBadge("DQ OPERATOR 1", 0x38bdf8);
-            badge1.position.set(0, 3.4, 0);
-            operator1.add(badge1);
-            group.add(operator1);
-
-            const operator2 = createDoctorCharacterModel(0x0f766e, 0x34d399);
-            operator2.position.set(2.0, -0.5, 7.5);
-            operator2.rotation.y = 0;
-            const badge2 = createCharacterNameBadge("DQ OPERATOR 2", 0x34d399);
-            badge2.position.set(0, 3.4, 0);
-            operator2.add(badge2);
-            group.add(operator2);
+            const singleOperator = createDoctorCharacterModel(0x0284c7, 0x38bdf8);
+            singleOperator.position.set(0.0, -0.5, 7.5);
+            singleOperator.rotation.y = 0;
+            const analystBadge = createCharacterNameBadge("DQ Analyst", 0x38bdf8);
+            analystBadge.position.set(0, 3.4, 0);
+            singleOperator.add(analystBadge);
+            group.add(singleOperator);
 
             scene.add(group);
         }
@@ -2080,7 +2136,7 @@
             commandHubGroup.add(holographicMolecule);
             group.add(commandHubGroup);
 
-            // Main White Lab Bench (Clean - Grid overlay removed)
+            // Main White Lab Bench
             const mainBench = new THREE.Mesh(
                 new THREE.BoxGeometry(26, 2.2, 5.0),
                 new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.1 })
@@ -2090,7 +2146,7 @@
             mainBench.receiveShadow = true;
             group.add(mainBench);
 
-            // CORRECTION: 3 ENLARGED CRYSTALS SHIFTED AN ADDITIONAL 150% FORWARD (+Z DIRECTION TO z = 5.2)
+            // 3 ENLARGED CRYSTALS SHIFTED +150% FORWARD
             liveMiniCrystalsGroup = new THREE.Group();
             liveMiniCrystalsGroup.position.set(0, -0.8, 5.2);
 
@@ -2102,7 +2158,6 @@
             miniAlis.position.set(-5.5, 0.8, 0);
             liveMiniCrystalsGroup.add(miniAlis);
 
-            // ALIS label adjusted lower
             const alisBottomBadge = create3DCrystalLabel("ALIS", 0x00f3ff);
             alisBottomBadge.position.set(-5.5, -1.1, 0);
             alisBottomBadge.scale.set(3.5, 1.0, 1);
@@ -2495,7 +2550,7 @@
                     if (s.position.y > 3.8) s.position.y = 2.6;
                 });
 
-                // DQ Team Instruments & Pipeline Beads
+                // DQ Team Instruments, Pipeline Beads & Connecting Line Bead Animations
                 dqAnimatedInstruments.forEach(item => {
                     if (item.type === 'spin') {
                         item.mesh.rotation.z += 0.1;
@@ -2507,6 +2562,13 @@
                 dqPipelineBeads.forEach(bead => {
                     bead.position.x += 0.08;
                     if (bead.position.x > 3.8) bead.position.x = -3.8;
+                });
+
+                // Animate connecting line data beads
+                connectingLineBeads.forEach(bead => {
+                    bead.userData.progress += 0.006;
+                    if (bead.userData.progress > 1.0) bead.userData.progress = 0;
+                    bead.position.x = bead.userData.startX + bead.userData.progress * (bead.userData.endX - bead.userData.startX);
                 });
 
                 // Stage 2 Seated Working Animations
