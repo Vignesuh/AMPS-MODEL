@@ -40,7 +40,7 @@
             position: relative;
         }
 
-        /* CORRECTION 2: Clear, visible lab background image (Minimal blur & enhanced visibility) */
+        /* Visible lab background image (Minimal blur & enhanced visibility) */
         body::before {
             content: "";
             position: fixed;
@@ -54,12 +54,11 @@
             background-position: center;
             background-repeat: no-repeat;
             
-            /* Gentle 2px blur & 0.65 brightness to make the lab structure clearly visible */
             filter: blur(2px) brightness(0.65) contrast(1.05);
             transform: scale(1.02);
         }
 
-        /* Gentle subtle vignette overlay */
+        /* Subtle vignette overlay */
         body::after {
             content: "";
             position: fixed;
@@ -141,9 +140,11 @@
             background: transparent;
             border: 1px solid transparent;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
         .stage-nav-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -239,8 +240,8 @@
                     <i class="fa-solid fa-flask"></i> 1. Legacy System
                 </button>
 
-                <button onclick="focusDQTeam(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
-                    <i class="fa-solid fa-shield-halved"></i> DQ Gateway
+                <button onclick="focusDQTeam(1)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron flex items-center" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> DQ Gateway
                 </button>
 
                 <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.125rem;"></div>
@@ -253,12 +254,12 @@
 
                 <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.125rem;"></div>
 
-                <button onclick="focusDQTeam(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
-                    <i class="fa-solid fa-shield-halved"></i> DQ Assurance
+                <button onclick="focusDQTeam(2)" class="stage-nav-btn px-2.5 py-2 rounded-xl font-bold font-orbitron flex items-center" style="font-size: 0.75rem; color: #38bdf8; border: 1px solid rgba(56,189,248,0.4);">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> DQ Assurance
                 </button>
 
                 <button onclick="focusSection('live')" class="stage-nav-btn px-3 py-2 rounded-xl font-bold font-orbitron flex items-center gap-1.5" style="font-size: 0.75rem; color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4);">
-                    <i class="fa-solid fa-network-wired"></i> 3. Live / Target System
+                    <i class="fa-solid fa-network-wired"></i> 3. Live / Target
                 </button>
 
                 <div style="height: 1.5rem; width: 1px; background: #334155; margin: 0 0.25rem;"></div>
@@ -281,7 +282,6 @@
                             <i class="fa-solid fa-pause"></i>
                         </span>
                     </div>
-                    <span class="font-orbitron font-bold" style="font-size: 0.75rem; color: #67e8f9;">WASD Move | Space Pause</span>
                 </div>
 
                 <div style="height: 2rem; width: 1px; background: rgba(51,65,85,0.6);"></div>
@@ -297,7 +297,7 @@
 
     <!-- Game Start Modal -->
     <div id="modal-start" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px);">
-        <div class="glass-panel p-6 rounded-3xl relative" style="max-width: 42rem; width: 100%; border: 1px solid rgba(6,182,212,0.4);">
+        <div class="glass-panel p-6 rounded-3xl relative" style="max-width: 44rem; width: 100%; border: 1px solid rgba(6,182,212,0.4);">
             <div class="flex items-center gap-3.5" style="margin-bottom: 1rem;">
                 <div class="rounded-2xl flex items-center justify-center text-2xl" style="width: 3rem; height: 3rem; background: rgba(6,182,212,0.2); border: 1px solid #22d3ee; color: #22d3ee;">
                     <i class="fa-solid fa-atom"></i>
@@ -308,12 +308,11 @@
                 </div>
             </div>
 
-            <p style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.625; margin-bottom: 1.5rem;">
+            <p style="color: #cbd5e1; font-size: 0.875rem; line-height: 1.625; margin-bottom: 1.25rem;">
                 Explore 3 macro-sections connected by light-blue laser lines &amp; moving data beads:
                 <br>&bull; <strong>Legacy &amp; Pre-Transformation DQ Gateway</strong> &mdash; SCMS, IBP, PEGA setup, single DQ Analyst, &amp; animated connecting line.
                 <br>&bull; <strong>Migration Factory</strong> &mdash; 5-stage pipeline with DVS (Test Automation) Control Station at Stage 4.
                 <br>&bull; <strong>Post-Transformation DQ Assurance &amp; Live Target System</strong> &mdash; Single DQ Analyst, connecting line, &amp; enlarged ALIS, CRM, CLARA output crystals.
-                <br>&bull; <strong>Controls</strong> &mdash; Press <strong>`SPACE`</strong> anytime to toggle animation pause/resume!
             </p>
 
             <button onclick="startGame()" class="w-full py-4 font-orbitron font-extrabold rounded-2xl flex items-center justify-center gap-3" style="background: linear-gradient(to right, #06b6d4, #2563eb, #4f46e5); color: #ffffff; border: none; cursor: pointer; font-size: 1rem;">
@@ -442,7 +441,6 @@
             return texture;
         }
 
-        // CORRECTION 1: Removed bottom grid lines
         function buildFloorGrid() {
             const floorGeo = new THREE.PlaneGeometry(320, 90);
             const floorMat = new THREE.MeshStandardMaterial({ 
@@ -604,23 +602,36 @@
             create3DSectionHeaderLabel(DQ_X.team2, "Post-Transformation Data Quality Assurance", 0x38bdf8);
             create3DSectionHeaderLabel(SECTION_X.live, "3. LIVE / TARGET SYSTEM", 0x10b981);
 
+            // MAPPED KEYBOARD LISTENERS FOR NAVIGATION
             window.addEventListener('keydown', (e) => {
-                if (e.key.toLowerCase() === 'w') keys.w = true;
-                if (e.key.toLowerCase() === 'a') keys.a = true;
-                if (e.key.toLowerCase() === 's') keys.s = true;
-                if (e.key.toLowerCase() === 'd') keys.d = true;
-                if (e.key.toLowerCase() === 'e') handleInteractKey();
-                
-                if (e.code === 'Space') {
-                    togglePauseState();
-                }
+                const key = e.key.toLowerCase();
+
+                // Movement & Pause
+                if (key === 'w') keys.w = true;
+                if (key === 'a') keys.a = true;
+                if (key === 's') keys.s = true;
+                if (key === 'd') keys.d = true;
+                if (key === 'e') handleInteractKey();
+                if (e.code === 'Space') togglePauseState();
+
+                // Navigation Hotkeys
+                if (key === 'l') focusSection('legacy');
+                if (key === 't') focusSection('live');
+                if (key === ',') focusDQTeam(1);
+                if (key === '.') focusDQTeam(2);
+                if (key === '1') focusStage(0);
+                if (key === '2') focusStage(1);
+                if (key === '3') focusStage(2);
+                if (key === '4') focusStage(3);
+                if (key === '5') focusStage(4);
             });
 
             window.addEventListener('keyup', (e) => {
-                if (e.key.toLowerCase() === 'w') keys.w = false;
-                if (e.key.toLowerCase() === 'a') keys.a = false;
-                if (e.key.toLowerCase() === 's') keys.s = false;
-                if (e.key.toLowerCase() === 'd') keys.d = false;
+                const key = e.key.toLowerCase();
+                if (key === 'w') keys.w = false;
+                if (key === 'a') keys.a = false;
+                if (key === 's') keys.s = false;
+                if (key === 'd') keys.d = false;
             });
 
             window.addEventListener('resize', onWindowResize);
